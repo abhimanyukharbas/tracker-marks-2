@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JEE 2027 Syllabus Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=DM+Sans:wght@400;500;700&family=Caveat:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#eef1f6;--card:#fff;--ink:#14213d;--mute:#5d6b85;--line:#d9dfea;--acc:#2447f5;--acc2:#ffb703;--ok:#12a36a;--mid:#f0a202;--low:#e5484d;--dot:#c3cbdb}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d1220;--card:#151c30;--ink:#e8ecf7;--mute:#8e9bb8;--line:#263050;--acc:#6f8bff;--acc2:#ffc933;--ok:#2fd18f;--mid:#ffb703;--low:#ff6b70;--dot:#3a4670}}
+:root[data-theme="dark"]{--bg:#0d1220;--card:#151c30;--ink:#e8ecf7;--mute:#8e9bb8;--line:#263050;--acc:#6f8bff;--acc2:#ffc933;--ok:#2fd18f;--mid:#ffb703;--low:#ff6b70;--dot:#3a4670}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.45 "DM Sans",system-ui,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:24px 16px 64px}
+h1{font:800 clamp(28px,5vw,44px)/1.05 "Bricolage Grotesque",sans-serif;margin:0 0 6px;letter-spacing:-.02em}
+.sub{color:var(--mute);margin:0 0 20px}
+.top{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;justify-content:space-between}
+.total{min-width:220px;flex:1;max-width:340px}
+.total b{font:800 34px "Bricolage Grotesque",sans-serif}
+.bar{height:8px;background:var(--line);border-radius:9px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--acc);border-radius:9px;transition:width .3s}
+.tabs{display:flex;gap:8px;margin:18px 0 12px;flex-wrap:wrap}
+.tab{flex:1;min-width:120px;text-align:left;border:2px solid var(--line);background:var(--card);color:var(--ink);border-radius:12px;padding:10px 14px;cursor:pointer;font:inherit}
+.tab[aria-selected=true]{border-color:var(--acc);box-shadow:0 0 0 3px color-mix(in srgb,var(--acc) 22%,transparent)}
+.tab strong{display:block;font:800 17px "Bricolage Grotesque",sans-serif}
+.tab span{color:var(--mute);font-size:13px}
+.note{background:color-mix(in srgb,var(--acc2) 22%,var(--card));border-left:4px solid var(--acc2);padding:10px 14px;border-radius:8px;margin:0 0 14px;font-size:14px}
+.tools{display:flex;gap:8px;justify-content:flex-end;margin-bottom:10px}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:8px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.btn:focus-visible,.tab:focus-visible,.cb:focus-visible,.dot:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.scroll{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:14px}
+table{border-collapse:collapse;width:100%;min-width:780px}
+th{font-size:12px;font-weight:700;color:var(--mute);text-align:center;padding:10px 6px;border-bottom:2px solid var(--line);line-height:1.2}
+th small{display:block;font-weight:400}
+th.l,td.l{text-align:left}
+td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:center}
+tr.done td.l .nm{color:var(--mute);text-decoration:line-through}
+.grp td{background:color-mix(in srgb,var(--acc) 9%,var(--card));text-align:left;font:800 14px "Bricolage Grotesque",sans-serif;padding:8px 12px}
+.grp em{font:400 12px "DM Sans";color:var(--mute);font-style:normal;float:right}
+.nm{font-weight:500}
+.cb{appearance:none;width:22px;height:22px;border:2px solid var(--dot);border-radius:6px;background:transparent;cursor:pointer;vertical-align:middle;margin:0}
+.cb:checked{background:var(--ok);border-color:var(--ok);background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3 8.5l3.2 3L13 4.5' fill='none' stroke='white' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");background-size:100%}
+.dots{display:inline-flex;gap:4px}
+.dot{width:18px;height:18px;border-radius:50%;border:2px solid var(--dot);background:transparent;padding:0;cursor:pointer}
+.dot.on{background:var(--acc);border-color:var(--acc)}
+.dots.conf .dot.on.c1{background:var(--low);border-color:var(--low)}
+.dots.conf .dot.on.c2{background:var(--mid);border-color:var(--mid)}
+.dots.conf .dot.on.c3{background:var(--ok);border-color:var(--ok)}
+.foot{color:var(--mute);font-size:13px;margin-top:14px}
+@media (max-width:640px){.tab{min-width:0;padding:8px 10px}.tab span{font-size:12px}}
+@media (prefers-reduced-motion:reduce){.bar i{transition:none}}
+
+html{scroll-behavior:auto}
+.track{height:220vh;position:relative}
+.hero{position:sticky;top:0;height:100vh;overflow:hidden;background:#4f4478}
+.scene{position:absolute;inset:0;width:100%;height:100%;transform-origin:50% 65%;will-change:transform}
+.ly{will-change:transform}
+.veil{position:absolute;inset:0;background:#170c10;opacity:0;pointer-events:none}
+.htxt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;text-align:center;padding:0 16px;text-shadow:0 4px 30px rgba(28,12,10,.55),0 1px 3px rgba(0,0,0,.35);will-change:transform,opacity}
+.dn{font:800 clamp(110px,24vw,300px)/.9 "Bricolage Grotesque",sans-serif;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.dl{font:800 clamp(24px,4.4vw,58px)/1.1 "Bricolage Grotesque",sans-serif;margin-top:6px;letter-spacing:.02em}
+.hr{width:clamp(110px,14vw,170px);height:2px;background:#fff;margin:clamp(18px,3vw,34px) 0 clamp(14px,2vw,22px);opacity:.9}
+.hs{font:700 clamp(13px,1.8vw,23px) "DM Sans",sans-serif;letter-spacing:.05em;text-transform:uppercase}
+.cue{position:absolute;bottom:26px;left:0;right:0;text-align:center;color:#fff;font-size:14px;text-shadow:0 2px 12px rgba(0,0,0,.5)}
+.cue:after{content:"";display:block;width:2px;height:34px;background:#fff;margin:10px auto 0;opacity:.8}
+.panel{position:relative;z-index:2;background:var(--bg);border-radius:28px 28px 0 0;margin-top:-28px;box-shadow:0 -24px 60px rgba(8,14,32,.35)}
+.panel .wrap{padding-top:44px}
+.rv{opacity:0;transform:translateY(34px);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.track{height:100vh}}
+.savebar{position:sticky;bottom:14px;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:18px;padding:10px 10px 10px 16px;background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 10px 30px rgba(8,14,32,.2);font-size:14px;color:var(--mute)}
+.savebar.dirty{border-color:var(--mid);color:var(--ink)}
+.sv{background:#12a36a;color:#fff;border:0;border-radius:10px;padding:11px 24px;font:700 15px "DM Sans",sans-serif;cursor:pointer;min-width:150px}
+.sv:disabled{opacity:.45;cursor:default}
+.sv:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+
+.nav{display:flex;gap:6px;overflow-x:auto;margin:0 0 16px;padding-bottom:4px}
+.nav button{white-space:nowrap;border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:8px 16px;font:600 14px "DM Sans",sans-serif;cursor:pointer}
+.nav button[aria-selected=true]{background:var(--acc);border-color:var(--acc);color:#fff}
+.nav button:focus-visible,.fc:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+.card h3{margin:0 0 10px;font:800 17px "Bricolage Grotesque",sans-serif}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;align-items:start}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.st{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px}
+.st b{display:block;font:800 26px "Bricolage Grotesque",sans-serif}.st span{color:var(--mute);font-size:13px}
+.mu{color:var(--mute);font-size:13px;margin:6px 0}
+.in{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:8px;padding:8px 10px;font:inherit;min-width:0}
+.btn.p{background:var(--acc);color:#fff;border-color:var(--acc)}
+.btn[aria-pressed=true]{background:var(--acc);color:#fff;border-color:var(--acc)}
+.modes,.frm{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:10px}
+.ring{position:relative;width:180px;height:180px;margin:6px auto}
+.ring b{position:absolute;inset:0;display:grid;place-items:center;font:800 36px "Bricolage Grotesque",sans-serif;font-variant-numeric:tabular-nums}
+.big{font:800 32px "Bricolage Grotesque",sans-serif;font-variant-numeric:tabular-nums;margin-bottom:6px}
+.fcs{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;margin-top:12px}
+.fc{border:1px solid var(--line);border-radius:12px;padding:14px 30px 14px 14px;min-height:96px;cursor:pointer;background:var(--card);position:relative}
+.fc.flip{background:color-mix(in srgb,var(--acc) 12%,var(--card));border-color:var(--acc)}
+.fc small{color:var(--mute);display:block;margin-bottom:6px}
+.btn.x{position:absolute;top:6px;right:6px;padding:0 7px}
+
+:root{--cork:#d9b98a}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--cork:#5b4630}}
+:root[data-theme="dark"]{--cork:#5b4630}
+.panel{background-image:radial-gradient(color-mix(in srgb,var(--ink) 9%,transparent) 1px,transparent 1.2px);background-size:24px 24px}
+.qt{margin:-8px 0 16px;font-style:italic;color:var(--acc);font-weight:500}
+.st,.tab{transition:transform .2s,box-shadow .2s}.st:hover,.tab:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(20,33,61,.14)}
+.fcv{perspective:1400px;max-width:640px;margin:8px auto 0}
+.fcard{position:relative;height:clamp(250px,44vw,330px);cursor:pointer;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.3,.7,.2,1)}
+.fcard.on{transform:rotateY(180deg)}
+.fcard:focus-visible{outline:3px solid var(--acc);outline-offset:6px;border-radius:22px}
+.fside{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:22px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:28px;box-shadow:0 18px 40px rgba(20,33,61,.25)}
+.ff{background:linear-gradient(135deg,var(--acc),#7a5cff);color:#fff}
+.fb{background:var(--card);color:var(--ink);border:2px solid var(--acc);transform:rotateY(180deg)}
+.fside .tag{font-size:12px;letter-spacing:.06em;opacity:.8;margin-bottom:14px;text-transform:uppercase}
+.fside .txt{font:800 clamp(20px,3.8vw,30px)/1.3 "Bricolage Grotesque",sans-serif;overflow:auto;max-height:80%}
+.fb .txt{font-size:clamp(17px,3.2vw,26px)}
+.fside .hint{margin-top:14px;font-size:12px;opacity:.75}
+.wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:30px 22px;padding:32px 22px;border-radius:16px;background-color:var(--cork);background-image:radial-gradient(rgba(0,0,0,.16) 1px,transparent 1.5px);background-size:14px 14px;box-shadow:inset 0 0 0 6px color-mix(in srgb,var(--cork) 60%,#3b2a18),inset 0 4px 20px rgba(0,0,0,.25)}
+.sn{position:relative;background:var(--c);color:#2a2233;padding:36px 14px 10px;min-height:210px;border-radius:3px 3px 16px 3px;box-shadow:0 10px 16px rgba(0,0,0,.3);transform:rotate(var(--r));transition:transform .25s;display:flex;flex-direction:column}
+.sn:hover,.sn:focus-within{transform:rotate(0) scale(1.04);z-index:2}
+.sn:before{content:"📌";position:absolute;top:-14px;left:50%;transform:translateX(-50%);font-size:24px}
+.sn .em{position:absolute;top:8px;left:12px;font-size:22px}
+.sn .x{position:absolute;top:6px;right:6px;border:0;background:rgba(0,0,0,.09);border-radius:50%;width:24px;height:24px;cursor:pointer;color:#2a2233}
+.sn textarea{flex:1;width:100%;background:transparent;border:0;resize:none;outline:0;color:#2a2233;font:600 22px/1.25 "Caveat","DM Sans",cursive}
+.pick{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:10px}
+.pick.sm{margin-top:6px;opacity:0;transition:opacity .2s}.sn:hover .pick.sm,.sn:focus-within .pick.sm{opacity:1}
+@media (hover:none){.pick.sm{opacity:1}}
+.ch{border:2px solid transparent;background:var(--bg);border-radius:8px;font-size:20px;cursor:pointer;padding:2px 6px}.ch.on{border-color:var(--acc)}
+.sw{width:22px;height:22px;border-radius:50%;border:2px solid rgba(0,0,0,.18);cursor:pointer;padding:0}.sw.on{border-color:var(--ink);box-shadow:0 0 0 2px var(--card)}
+@media (prefers-reduced-motion:reduce){.fcard,.sn{transition:none}}
+
+/* --- section identity: notes vs flashcards are visually distinct pages --- */
+.sechead{margin:0 0 16px}
+.sechead h2{font:800 clamp(22px,3.6vw,30px)/1.15 "Bricolage Grotesque",sans-serif;margin:0 0 4px;letter-spacing:-.01em}
+.sechead p{color:var(--mute);margin:0;font-size:14px}
+
+/* flashcards: give the card a "stack" so it reads as a deck, not a lone box */
+.fcv{position:relative;padding-top:10px}
+.fcv:before,.fcv:after{content:"";position:absolute;left:6%;right:6%;top:16px;bottom:-6px;border-radius:22px;background:var(--card);border:1px solid var(--line);z-index:-1}
+.fcv:before{transform:rotate(-2.2deg)}
+.fcv:after{left:8%;right:8%;transform:rotate(2.4deg);opacity:.75}
+.fcard[data-subj="p"] .ff{background:linear-gradient(135deg,#2447f5,#6f8bff)}
+.fcard[data-subj="c"] .ff{background:linear-gradient(135deg,#0e8a58,#2fd18f)}
+.fcard[data-subj="m"] .ff{background:linear-gradient(135deg,#d68a00,#ffc933)}
+.fcard[data-subj="p"] .fb{border-color:#2447f5}
+.fcard[data-subj="c"] .fb{border-color:#0e8a58}
+.fcard[data-subj="m"] .fb{border-color:#d68a00}
+.fmeta{display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;flex-wrap:wrap}
+.fprog{display:flex;justify-content:center;gap:5px;margin:12px 0 22px;flex-wrap:wrap;max-width:100%}
+.fprog i{width:7px;height:7px;border-radius:50%;background:var(--dot);flex:none}
+.fprog i.on{background:var(--acc);width:18px;border-radius:4px}
+.fprog i.done{background:var(--ok)}
+.pill.subj{display:inline-flex;align-items:center;gap:5px;font:700 12px "DM Sans",sans-serif;padding:4px 10px;border-radius:999px;color:#fff;margin-bottom:12px;background:rgba(255,255,255,.22)}
+.pill.p,.pill.c,.pill.m{background:rgba(255,255,255,.22)}
+
+/* sticky notes wall: uneven heights + torn-paper feel so it reads like a real board */
+.wall .sn:nth-child(5n+2){min-height:250px}
+.wall .sn:nth-child(5n+3){min-height:180px}
+.wall .sn:nth-child(5n+4){min-height:225px}
+.sn{background-image:linear-gradient(rgba(255,255,255,.18),transparent 40%)}
+.notecount{color:var(--mute);font-size:13px;margin:-4px 0 14px}
+</style>
+</head>
+<body>
+<section class="track" id="track"><div class="hero">
+<svg class="scene" id="scene" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+<defs>
+<linearGradient id="sky" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="440"><stop offset="0" stop-color="#3f3a75"/><stop offset=".25" stop-color="#a65f86"/><stop offset=".5" stop-color="#f08a6a"/><stop offset=".78" stop-color="#ffc47e"/><stop offset="1" stop-color="#ffe6b8"/></linearGradient>
+<radialGradient id="sun" gradientUnits="userSpaceOnUse" cx="860" cy="270" r="380"><stop offset="0" stop-color="#fff4cf" stop-opacity=".98"/><stop offset=".3" stop-color="#ffc98a" stop-opacity=".55"/><stop offset="1" stop-color="#ff9e6b" stop-opacity="0"/></radialGradient>
+<radialGradient id="ray" gradientUnits="userSpaceOnUse" cx="860" cy="270" r="760"><stop offset="0" stop-color="#fff0c4" stop-opacity=".5"/><stop offset="1" stop-color="#fff0c4" stop-opacity="0"/></radialGradient>
+<linearGradient id="lake" gradientUnits="userSpaceOnUse" x1="0" y1="440" x2="0" y2="900"><stop offset="0" stop-color="#f6b98c"/><stop offset=".25" stop-color="#b89aa0"/><stop offset=".6" stop-color="#4f7482"/><stop offset="1" stop-color="#1d4453"/></linearGradient>
+<linearGradient id="sl" gradientUnits="userSpaceOnUse" x1="0" y1="430" x2="0" y2="900"><stop offset="0" stop-color="#d9b447"/><stop offset=".18" stop-color="#7fa03a"/><stop offset=".55" stop-color="#3f6428"/><stop offset="1" stop-color="#1f3819"/></linearGradient>
+<linearGradient id="dkg" gradientUnits="userSpaceOnUse" x1="0" y1="740" x2="0" y2="900"><stop offset="0" stop-color="#16301f"/><stop offset="1" stop-color="#08140d"/></linearGradient>
+<radialGradient id="dk" gradientUnits="userSpaceOnUse" cx="800" cy="450" r="380"><stop offset="0" stop-color="#1c0e0c" stop-opacity=".4"/><stop offset="1" stop-color="#1c0e0c" stop-opacity="0"/></radialGradient>
+<filter id="bl" x="-30%" y="-40%" width="160%" height="180%"><feGaussianBlur stdDeviation="16"/></filter>
+<filter id="bl2" x="-30%" y="-60%" width="160%" height="220%"><feGaussianBlur stdDeviation="26"/></filter>
+<filter id="bl4" x="-10%" y="-100%" width="120%" height="300%"><feGaussianBlur stdDeviation="1.6 1"/></filter>
+<filter id="bl3" x="-50%" y="-20%" width="200%" height="140%"><feGaussianBlur stdDeviation="30"/></filter>
+</defs>
+<rect width="1600" height="1200" fill="url(#sky)"/>
+<circle cx="860" cy="270" r="380" fill="url(#sun)"/>
+<g fill="url(#ray)" filter="url(#bl)"><path d="M860 270 L420 -120 L560 -160Z"/><path d="M860 270 L700 -180 L800 -190Z"/><path d="M860 270 L950 -190 L1060 -170Z"/><path d="M860 270 L1180 -130 L1320 -100Z"/><path d="M860 270 L1500 60 L1600 150Z"/><path d="M860 270 L120 90 L0 190Z"/></g>
+<g class="ly" data-s=".02" data-x="240" filter="url(#bl)" fill="#f2a5a6" opacity=".7"><ellipse cx="300" cy="70" rx="330" ry="22"/><ellipse cx="1300" cy="60" rx="360" ry="24"/><ellipse cx="180" cy="150" rx="260" ry="16"/><ellipse cx="1420" cy="150" rx="240" ry="14"/><ellipse cx="740" cy="170" rx="220" ry="18" fill="#ffb27a"/><ellipse cx="1010" cy="200" rx="200" ry="14" fill="#ffc78a"/></g>
+<g class="ly" data-s=".04"><circle cx="860" cy="280" r="27" fill="#fff8de"/><path fill="#b98290" opacity=".95" d="M0 300 L120 250 L230 285 L360 225 L470 290 L600 262 L720 300 L860 292 L1010 300 L1150 256 L1280 296 L1420 240 L1540 280 L1600 268 L1600 520 L0 520Z"/></g>
+<g class="ly" data-s=".06"><path fill="#8e7690" d="M0 350 L150 292 L300 338 L450 272 L620 342 L760 324 L900 348 L1080 302 L1240 352 L1400 292 L1600 346 L1600 540 L0 540Z"/></g>
+<g class="ly" data-s=".08"><path fill="#617a76" d="M0 410 Q200 356 420 400 Q600 436 760 410 Q980 374 1200 414 Q1400 444 1600 400 L1600 620 L0 620Z"/></g>
+<g class="ly" data-s=".1"><rect y="444" width="1600" height="900" fill="url(#lake)"/><ellipse cx="860" cy="620" rx="90" ry="190" fill="#ffd9a0" opacity=".32" filter="url(#bl3)"/><g fill="#fff0c4" opacity=".55" filter="url(#bl4)"><rect x="839" y="450" width="32" height="2" rx="2"/><rect x="833" y="466" width="58" height="2" rx="2"/><rect x="817" y="481" width="89" height="2" rx="2"/><rect x="810" y="490" width="73" height="2" rx="2"/><rect x="815" y="508" width="110" height="2" rx="2"/><rect x="835" y="519" width="97" height="2" rx="2"/><rect x="810" y="537" width="115" height="2" rx="2"/><rect x="817" y="556" width="128" height="2" rx="2"/><rect x="749" y="574" width="170" height="3" rx="2"/><rect x="797" y="597" width="116" height="3" rx="2"/><rect x="774" y="623" width="164" height="3" rx="2"/><rect x="806" y="648" width="131" height="3" rx="2"/><rect x="766" y="680" width="179" height="3" rx="2"/><rect x="744" y="717" width="110" height="4" rx="2"/><rect x="720" y="750" width="253" height="4" rx="2"/><rect x="742" y="792" width="160" height="4" rx="2"/><rect x="693" y="833" width="201" height="5" rx="2"/></g></g>
+<g class="ly" data-s=".09" data-x="-120" filter="url(#bl2)" fill="#ffe6dc" opacity=".72"><ellipse cx="420" cy="446" rx="420" ry="30"/><ellipse cx="1080" cy="452" rx="460" ry="34"/><ellipse cx="760" cy="500" rx="300" ry="26"/></g>
+<g class="ly" data-s=".17"><path fill="url(#sl)" d="M0 470 Q150 440 330 520 Q470 600 520 1200 L0 1200Z"/><path fill="none" stroke="#ffd98a" stroke-width="3" opacity=".55" d="M0 470 Q150 440 330 520 Q470 600 520 900"/><path fill="#1c3a24" opacity=".9" d="M84 491 L89 510 L87 510 L92 524 L89 524 L93 533 L74 533 L79 524 L76 524 L81 510 L78 510ZM71 508 L76 524 L74 524 L78 536 L75 536 L79 543 L63 543 L67 536 L64 536 L68 524 L66 524ZM106 537 L113 559 L110 559 L116 574 L112 574 L117 585 L95 585 L101 574 L97 574 L103 559 L100 559ZM115 480 L120 497 L118 497 L123 509 L120 509 L124 518 L106 518 L111 509 L108 509 L112 497 L110 497ZM51 516 L57 535 L55 535 L60 549 L56 549 L61 558 L42 558 L46 549 L43 549 L48 535 L46 535ZM126 562 L133 585 L130 585 L137 602 L132 602 L138 613 L115 613 L120 602 L116 602 L122 585 L119 585ZM46 448 L51 463 L49 463 L53 474 L50 474 L54 481 L39 481 L42 474 L40 474 L44 463 L42 463ZM34 565 L42 590 L38 590 L45 609 L41 609 L47 621 L21 621 L28 609 L23 609 L30 590 L27 590ZM125 490 L130 508 L128 508 L133 521 L130 521 L134 530 L116 530 L120 521 L117 521 L122 508 L120 508ZM30 505 L35 522 L32 522 L37 534 L34 534 L38 542 L21 542 L25 534 L22 534 L27 522 L25 522ZM130 448 L134 463 L132 463 L136 474 L134 474 L137 482 L122 482 L126 474 L123 474 L127 463 L125 463ZM33 477 L38 492 L36 492 L40 503 L37 503 L41 511 L26 511 L29 503 L27 503 L31 492 L29 492ZM23 456 L27 469 L25 469 L29 480 L26 480 L30 486 L16 486 L19 480 L17 480 L20 469 L19 469ZM27 553 L34 577 L31 577 L38 595 L33 595 L39 607 L15 607 L21 595 L16 595 L23 577 L20 577ZM15 482 L20 497 L18 497 L22 509 L19 509 L23 517 L7 517 L11 509 L8 509 L13 497 L11 497ZM8 553 L16 578 L13 578 L20 596 L15 596 L21 608 L-4 608 L2 596 L-3 596 L4 578 L1 578ZM156 471 L160 485 L158 485 L162 495 L159 495 L163 502 L149 502 L152 495 L149 495 L153 485 L152 485ZM7 507 L13 526 L11 526 L16 539 L12 539 L17 549 L-2 549 L3 539 L-1 539 L4 526 L2 526ZM167 449 L171 462 L169 462 L173 472 L171 472 L174 478 L161 478 L164 472 L161 472 L165 462 L163 462ZM186 517 L193 538 L190 538 L196 554 L192 554 L197 565 L175 565 L180 554 L176 554 L183 538 L180 538ZM203 517 L209 537 L206 537 L212 551 L208 551 L213 561 L193 561 L198 551 L194 551 L200 537 L197 537ZM212 457 L217 474 L215 474 L220 486 L217 486 L221 494 L204 494 L208 486 L205 486 L210 474 L208 474ZM267 577 L275 603 L271 603 L279 622 L274 622 L280 635 L253 635 L260 622 L255 622 L262 603 L259 603ZM282 527 L287 545 L285 545 L290 559 L287 559 L291 567 L273 567 L277 559 L274 559 L279 545 L276 545ZM307 496 L311 511 L309 511 L313 522 L311 522 L314 529 L299 529 L303 522 L300 522 L304 511 L302 511ZM314 509 L320 527 L317 527 L322 540 L319 540 L323 549 L305 549 L310 540 L306 540 L311 527 L309 527ZM340 503 L345 520 L343 520 L347 531 L344 531 L348 539 L332 539 L336 531 L333 531 L337 520 L335 520ZM353 551 L359 571 L357 571 L362 585 L358 585 L363 595 L343 595 L348 585 L344 585 L350 571 L347 571ZM358 593 L365 617 L362 617 L369 635 L364 635 L370 646 L346 646 L352 635 L347 635 L354 617 L351 617ZM372 574 L379 597 L376 597 L382 615 L378 615 L384 626 L360 626 L365 615 L361 615 L368 597 L365 597ZM383 638 L393 671 L389 671 L398 695 L392 695 L400 710 L367 710 L375 695 L369 695 L378 671 L374 671ZM387 614 L394 640 L391 640 L398 658 L393 658 L400 671 L374 671 L380 658 L375 658 L382 640 L379 640ZM408 611 L416 637 L413 637 L420 656 L415 656 L422 669 L395 669 L402 656 L397 656 L404 637 L401 637ZM413 595 L420 618 L417 618 L424 635 L419 635 L425 647 L401 647 L407 635 L403 635 L409 618 L406 618ZM409 643 L417 672 L413 672 L421 692 L416 692 L423 706 L394 706 L401 692 L396 692 L404 672 L400 672ZM417 579 L424 603 L421 603 L428 622 L423 622 L429 634 L404 634 L410 622 L406 622 L413 603 L409 603ZM418 708 L429 744 L424 744 L434 771 L428 771 L437 789 L399 789 L408 771 L402 771 L412 744 L407 744ZM438 677 L447 708 L443 708 L452 731 L446 731 L454 746 L422 746 L429 731 L424 731 L432 708 L428 708ZM436 705 L447 742 L442 742 L452 769 L445 769 L455 787 L417 787 L426 769 L419 769 L429 742 L425 742ZM460 706 L471 743 L466 743 L477 771 L470 771 L479 789 L441 789 L450 771 L443 771 L454 743 L449 743ZM461 799 L475 844 L469 844 L482 877 L473 877 L485 900 L438 900 L450 877 L441 877 L454 844 L448 844ZM461 807 L474 850 L469 850 L481 882 L473 882 L483 902 L439 902 L450 882 L442 882 L454 850 L449 850ZM455 766 L466 804 L461 804 L472 832 L465 832 L474 850 L435 850 L445 832 L438 832 L448 804 L443 804ZM466 756 L478 795 L473 795 L483 823 L476 823 L486 842 L446 842 L456 823 L449 823 L460 795 L455 795Z"/>
+<path fill="url(#sl)" d="M1600 430 Q1420 450 1260 560 Q1150 650 1120 1200 L1600 1200Z"/><path fill="none" stroke="#ffd98a" stroke-width="3" opacity=".55" d="M1600 430 Q1420 450 1260 560 Q1150 650 1120 900"/><path fill="#1c3a24" opacity=".9" d="M1571 461 L1575 477 L1574 477 L1578 488 L1575 488 L1579 495 L1563 495 L1567 488 L1564 488 L1568 477 L1566 477ZM1561 533 L1568 554 L1565 554 L1571 570 L1567 570 L1572 580 L1550 580 L1556 570 L1552 570 L1558 554 L1555 554ZM1546 483 L1552 500 L1549 500 L1554 513 L1551 513 L1555 521 L1537 521 L1542 513 L1539 513 L1543 500 L1541 500ZM1534 424 L1538 436 L1536 436 L1540 444 L1537 444 L1540 450 L1528 450 L1531 444 L1529 444 L1532 436 L1531 436ZM1531 419 L1535 432 L1533 432 L1537 442 L1535 442 L1538 449 L1524 449 L1528 442 L1525 442 L1529 432 L1527 432ZM1531 480 L1536 498 L1534 498 L1539 511 L1536 511 L1540 520 L1522 520 L1526 511 L1523 511 L1528 498 L1525 498ZM1528 464 L1533 480 L1531 480 L1535 491 L1532 491 L1536 499 L1520 499 L1524 491 L1521 491 L1526 480 L1523 480ZM1483 535 L1489 555 L1487 555 L1492 569 L1489 569 L1494 579 L1473 579 L1478 569 L1475 569 L1480 555 L1478 555ZM1465 472 L1469 487 L1468 487 L1472 498 L1469 498 L1473 505 L1457 505 L1461 498 L1458 498 L1462 487 L1460 487ZM1463 502 L1469 521 L1466 521 L1471 535 L1468 535 L1473 545 L1453 545 L1458 535 L1454 535 L1460 521 L1457 521ZM1434 562 L1441 586 L1438 586 L1445 603 L1440 603 L1446 615 L1422 615 L1428 603 L1424 603 L1430 586 L1427 586ZM1435 510 L1441 530 L1438 530 L1444 544 L1440 544 L1445 554 L1425 554 L1430 544 L1426 544 L1432 530 L1429 530ZM1383 520 L1389 541 L1386 541 L1392 556 L1388 556 L1393 566 L1372 566 L1377 556 L1374 556 L1379 541 L1377 541ZM1379 584 L1388 611 L1384 611 L1392 631 L1387 631 L1393 644 L1366 644 L1372 631 L1367 631 L1375 611 L1371 611ZM1372 589 L1379 614 L1376 614 L1383 633 L1378 633 L1385 645 L1359 645 L1365 633 L1361 633 L1368 614 L1364 614ZM1344 593 L1352 621 L1349 621 L1357 642 L1351 642 L1358 656 L1329 656 L1336 642 L1331 642 L1339 621 L1335 621ZM1334 497 L1340 515 L1337 515 L1342 528 L1339 528 L1344 537 L1325 537 L1330 528 L1326 528 L1331 515 L1329 515ZM1333 520 L1339 538 L1336 538 L1341 552 L1338 552 L1343 560 L1324 560 L1329 552 L1325 552 L1330 538 L1328 538ZM1323 581 L1331 609 L1328 609 L1335 630 L1330 630 L1337 643 L1309 643 L1316 630 L1310 630 L1318 609 L1315 609ZM1319 577 L1327 603 L1324 603 L1331 622 L1326 622 L1333 635 L1306 635 L1312 622 L1307 622 L1315 603 L1311 603ZM1320 595 L1329 624 L1325 624 L1333 646 L1328 646 L1335 660 L1305 660 L1312 646 L1307 646 L1315 624 L1311 624ZM1311 616 L1320 644 L1316 644 L1324 664 L1319 664 L1326 678 L1297 678 L1304 664 L1299 664 L1307 644 L1303 644ZM1287 626 L1296 657 L1292 657 L1301 680 L1295 680 L1303 695 L1271 695 L1279 680 L1273 680 L1281 657 L1277 657ZM1286 560 L1294 584 L1290 584 L1297 602 L1293 602 L1299 614 L1274 614 L1280 602 L1276 602 L1282 584 L1279 584ZM1281 539 L1287 560 L1284 560 L1290 576 L1286 576 L1291 586 L1270 586 L1275 576 L1271 576 L1277 560 L1274 560ZM1268 519 L1274 540 L1272 540 L1277 555 L1274 555 L1279 565 L1258 565 L1263 555 L1259 555 L1265 540 L1262 540ZM1259 528 L1265 549 L1262 549 L1268 563 L1264 563 L1269 573 L1248 573 L1254 563 L1250 563 L1255 549 L1253 549ZM1240 618 L1248 644 L1245 644 L1252 663 L1247 663 L1254 676 L1227 676 L1233 663 L1228 663 L1236 644 L1232 644ZM1226 643 L1236 677 L1232 677 L1241 701 L1235 701 L1243 718 L1209 718 L1217 701 L1211 701 L1221 677 L1216 677ZM1234 591 L1241 615 L1238 615 L1245 632 L1240 632 L1246 644 L1222 644 L1228 632 L1223 632 L1230 615 L1227 615ZM1216 609 L1224 635 L1220 635 L1228 654 L1223 654 L1229 667 L1203 667 L1209 654 L1204 654 L1212 635 L1208 635ZM1208 693 L1219 729 L1214 729 L1224 757 L1217 757 L1227 775 L1189 775 L1198 757 L1191 757 L1202 729 L1197 729ZM1211 599 L1220 629 L1216 629 L1224 650 L1219 650 L1226 665 L1196 665 L1203 650 L1198 650 L1206 629 L1202 629ZM1201 680 L1211 712 L1207 712 L1216 735 L1210 735 L1218 751 L1185 751 L1193 735 L1187 735 L1196 712 L1192 712ZM1196 687 L1206 721 L1201 721 L1211 747 L1205 747 L1213 763 L1178 763 L1187 747 L1180 747 L1190 721 L1185 721ZM1198 740 L1209 779 L1204 779 L1215 809 L1208 809 L1218 828 L1177 828 L1187 809 L1180 809 L1191 779 L1186 779ZM1175 660 L1185 695 L1181 695 L1190 720 L1184 720 L1193 737 L1157 737 L1166 720 L1160 720 L1169 695 L1165 695ZM1177 770 L1189 811 L1184 811 L1196 842 L1188 842 L1198 862 L1156 862 L1166 842 L1158 842 L1170 811 L1165 811ZM1163 774 L1176 819 L1170 819 L1183 852 L1174 852 L1185 873 L1140 873 L1151 852 L1143 852 L1155 819 L1149 819ZM1159 737 L1171 777 L1166 777 L1177 805 L1169 805 L1179 825 L1139 825 L1149 805 L1142 805 L1153 777 L1147 777ZM1151 761 L1163 800 L1158 800 L1169 829 L1162 829 L1171 848 L1131 848 L1141 829 L1134 829 L1145 800 L1140 800Z"/></g>
+<g class="ly" data-s=".27"><path fill="url(#dkg)" d="M0 1200 L0 800 Q200 758 420 815 Q640 862 800 832 Q1000 792 1200 832 Q1420 870 1600 805 L1600 1200Z"/></g>
+<rect width="1600" height="900" fill="url(#dk)"/>
+</svg>
+<div class="veil" id="veil"></div>
+<div class="htxt" id="htxt">
+<div class="dn" id="dn" aria-live="polite">0</div>
+<div class="dl" id="dl">DAYS LEFT</div>
+<div class="hr"></div>
+<div class="hs">Till JEE Main — Jan 22, 2027</div>
+</div>
+<div class="cue" id="cue">Scroll to open your tracker</div>
+</div></section>
+<main class="panel"><div class="wrap">
+  <div class="top rv">
+    <div>
+      <h1>JEE 2027 syllabus tracker 🎯</h1>
+      <p class="sub">Dropper plan: every chapter, on its monthly deadline, till 15 Dec.</p>
+      <p class="qt" id="qt"></p>
+    </div>
+    <div class="total"><b id="tp">0%</b> <span class="sub">of Theory, Module, PYQs and Revision done</span><div class="bar"><i id="tb"></i></div></div>
+  </div>
+  <nav class="nav" id="nav" role="tablist"></nav>
+<section id="v-syllabus">
+<div class="tabs rv" role="tablist" id="tabs"></div>
+  <div class="note rv" id="note"></div>
+  <div class="tools rv"><button class="btn" id="reset">Reset this subject</button></div>
+  <div class="scroll rv"><table id="tbl"></table></div>
+  <p class="foot">Progress counts Theory, Module, both PYQ sets and the Revision cycle (3 circles). Formula revision and confidence are for your own tracking. Tap Save progress at the bottom to keep your changes. Unsaved changes are lost when you leave. Saved in this browser.</p>
+</section>
+<section id="v-timers" hidden></section><section id="v-goals" hidden></section><section id="v-notes" hidden></section><section id="v-flash" hidden></section>
+<div class="savebar" id="sbar"><span id="sst">All changes saved</span><button class="sv" id="sv" disabled>Save progress</button></div>
+</div></main>
+<script>
+const SUBJ=[
+{k:"p",n:"Physics",note:"JEE Main PYQs of 2019–2022 are to be done first, then 2023–2026.",py:["2019-22","2023-26"],
+ m:[["Till July",["Mathematics in Physics","Units and Dimensions","Motion In One Dimension","Motion In Two Dimensions","Laws of Motion","Work Power Energy","COM, Momentum & Collision","Rotational Motion","Atomic Physics"]],
+ ["Till Aug",["Dual Nature of Matter","Nuclear Physics","Kinetic Theory of Gases","Thermal Properties of Matter","Thermodynamics"]],
+ ["Till Sep",["Mechanical Properties of Fluids","Mechanical Properties of Solids","Oscillation","Electrostatics","Gravitation"]],
+ ["Till Oct",["Capacitance","Current Electricity","Magnetic Effects of Current","Magnetic Properties of Matter"]],
+ ["Till Nov",["Alternating Current","Electromagnetic Induction","Wave Optics","Ray Optics"]],
+ ["Till 15 Dec",["Waves and Sound","Semiconductors & EM Waves"]]]},
+{k:"c",n:"Chemistry",note:"PYQ order: do recent years first. The last 5 years in reverse order will serve the purpose.",py:["2026-23","2022-19"],
+ m:[["Till July",["Some Basic Concepts of Chemistry","Structure of Atom","Solutions","Electrochemistry","Chemical Kinetics","Chemical Equilibrium","Ionic Equilibrium"]],
+ ["Till Aug",["Redox Reactions","Thermodynamics (C)","Periodic Table & Properties","Chemical Bonding"]],
+ ["Till Sep",["General Organic Chemistry","Isomerism","Hydrocarbon","Haloalkanes and Haloarenes"]],
+ ["Till Oct",["Alcohols, Phenols and Ethers","Aldehydes, Ketones","Carboxylic Acid Derivatives","Amines"]],
+ ["Till Nov",["Biomolecules","Coordination Compounds","d and f Block Elements","p Block Elements"]],
+ ["Till 15 Dec",["Practical Chemistry [Qualitative Analysis]"]]]},
+{k:"m",n:"Mathematics",note:"PYQ order: do recent years first. 2022 is a challenge, so practise it only for well-prepared chapters.",py:["2026-23","2022-19"],
+ m:[["Till July",["Basic of Mathematics","Quadratic Equation","Sequences and Series","Trigonometric Functions","Trigonometric Equation","Permutations and Combinations","Binomial theorem"]],
+ ["Till Aug",["Straight Lines","Circle","Parabola","Ellipse","Hyperbola"]],
+ ["Till Sep",["Matrices","Determinants","Sets and Relations","Functions","Inverse Trigonometry"]],
+ ["Till Oct",["Limits","Continuity and Differentiability","Application of Derivatives","Indefinite Integration","Definite Integration"]],
+ ["Till Nov",["Area Under Curves","Differential Equations","Vector Algebra","Three-Dimensional Geometry"]],
+ ["Till 15 Dec",["Complex Number","Probability","Statistics"]]]}
+];
+const KEY="jee2027-tracker-v1";
+let S={},cur=0,armed=false;
+try{S=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){S={}}
+let dirty=false;
+const save=()=>{dirty=true;syncBar()};
+function syncBar(){const b=document.getElementById("sv"),bar=document.getElementById("sbar");if(!b)return;bar.classList.toggle("dirty",dirty);document.getElementById("sst").textContent=dirty?"You have unsaved changes":"All changes saved";b.disabled=!dirty}
+function commit(){const b=document.getElementById("sv");let ok=true;try{localStorage.setItem(KEY,JSON.stringify(S));localStorage.setItem(KD,JSON.stringify(D))}catch(e){ok=false}
+  if(ok)dirty=false;syncBar();b.textContent=ok?"Saved ✓":"Could not save";setTimeout(()=>{b.textContent="Save progress"},1600)}
+addEventListener("beforeunload",e=>{if(dirty){e.preventDefault();e.returnValue=""}});
+const get=id=>S[id]||(S[id]={t:0,m:0,a:0,b:0,r:0,f:0,c:0});
+const score=id=>{const s=S[id];return s?(s.t+s.m+s.a+s.b+s.r/3)/5:0};
+const ids=(sj)=>sj.m.flatMap((g,gi)=>g[1].map((_,i)=>sj.k+gi+"_"+i));
+const pct=list=>list.length?Math.round(list.reduce((a,id)=>a+score(id),0)/list.length*100):0;
+function dots(id,f,v,conf){let h='<span class="dots'+(conf?' conf':'')+'">';for(let n=1;n<=3;n++)h+=`<button class="dot${v>=n?' on c'+v:''}" data-id="${id}" data-f="${f}" data-v="${n}" aria-label="${f} level ${n}" aria-pressed="${v>=n}"></button>`;return h+'</span>'}
+function render(){
+  const all=SUBJ.flatMap(ids);
+  document.getElementById("tp").textContent=pct(all)+"%";
+  document.getElementById("tb").style.width=pct(all)+"%";
+  document.getElementById("tabs").innerHTML=SUBJ.map((s,i)=>`<button class="tab" role="tab" aria-selected="${i==cur}" data-tab="${i}"><strong>${SEM[s.k]} ${s.n}</strong><span>${pct(ids(s))}% done</span></button>`).join("");
+  const sj=SUBJ[cur];
+  document.getElementById("note").textContent=sj.note;
+  let h=`<tr><th class="l" style="padding-left:12px">Chapter</th><th>Theory</th><th>Module<small>50-60 Qns</small></th><th>PYQ<small>${sj.py[0]}</small></th><th>PYQ<small>${sj.py[1]}</small></th><th>Revision<small>cycle</small></th><th>Formula<small>revision</small></th><th>Confidence<small>meter</small></th></tr>`;
+  sj.m.forEach((g,gi)=>{
+    const gid=g[1].map((_,i)=>sj.k+gi+"_"+i);
+    h+=`<tr class="grp"><td colspan="8">${g[0]}<em>${pct(gid)}% · ${gid.filter(x=>score(x)==1).length}/${gid.length} chapters complete</em></td></tr>`;
+    g[1].forEach((c,i)=>{
+      const id=gid[i],s=get(id);
+      h+=`<tr class="${score(id)==1?'done':''}"><td class="l" style="padding-left:12px"><span class="nm">${c}${score(id)==1?" ✅":""}</span></td>`;
+      ["t","m","a","b"].forEach(f=>{h+=`<td><input type="checkbox" class="cb" data-id="${id}" data-f="${f}" ${s[f]?'checked':''} aria-label="${c}: ${f}"></td>`});
+      h+=`<td>${dots(id,"r",s.r)}</td><td>${dots(id,"f",s.f)}</td><td>${dots(id,"c",s.c,1)}</td></tr>`;
+    });
+  });
+  document.getElementById("tbl").innerHTML=h;
+  const rb=document.getElementById("reset");rb.textContent=armed?"Tap again to confirm":"Reset this subject";
+}
+document.addEventListener("click",e=>{
+  const t=e.target;
+  if(t.dataset.tab!==undefined||t.closest("[data-tab]")){cur=+(t.closest("[data-tab]").dataset.tab);armed=false;render();return}
+  if(t.id==="reset"){if(armed){ids(SUBJ[cur]).forEach(id=>delete S[id]);save();armed=false}else{armed=true}render();return}
+  if(t.classList.contains("dot")){const s=get(t.dataset.id),f=t.dataset.f,v=+t.dataset.v;s[f]=s[f]===v?v-1:v;save();render();
+    const nb=document.querySelector(`.dot[data-id="${t.dataset.id}"][data-f="${f}"][data-v="${v}"]`);if(nb)nb.focus();}
+});
+document.addEventListener("change",e=>{
+  const t=e.target;if(!t.classList.contains("cb")||!t.dataset.f)return;
+  get(t.dataset.id)[t.dataset.f]=t.checked?1:0;save();render();
+  const nb=document.querySelector(`.cb[data-id="${t.dataset.id}"][data-f="${t.dataset.f}"]`);if(nb)nb.focus();
+});
+
+const EXAM=new Date(2027,0,22),RM=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const dn=document.getElementById("dn"),dl=document.getElementById("dl");
+const daysLeft=()=>{const n=new Date();return Math.round((EXAM-new Date(n.getFullYear(),n.getMonth(),n.getDate()))/864e5)};
+function updateDays(first){
+  const d=Math.max(0,daysLeft());
+  dl.textContent=d===0?"JEE MAIN IS HERE":d===1?"DAY LEFT":"DAYS LEFT";
+  if(first&&!RM){const t0=performance.now();const step=t=>{const k=Math.min(1,(t-t0)/1500),e=1-Math.pow(1-k,3);dn.textContent=Math.round(d*e);if(k<1)requestAnimationFrame(step)};requestAnimationFrame(step)}
+  else dn.textContent=d;
+}
+updateDays(true);
+setInterval(()=>updateDays(false),60000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)updateDays(false)});
+const track=document.getElementById("track"),sc=document.getElementById("scene"),ht=document.getElementById("htxt"),vl=document.getElementById("veil"),cue=document.getElementById("cue"),ly=[...document.querySelectorAll(".ly")];
+let tk=false;
+function onScroll(){if(tk)return;tk=true;requestAnimationFrame(()=>{tk=false;
+  const max=Math.max(1,track.offsetHeight-innerHeight),p=Math.min(1,Math.max(0,scrollY/max));
+  sc.style.transform="scale("+(1+p*.16)+")";
+  ly.forEach(g=>g.style.transform="translate("+p*(+g.dataset.x||0)+"px,"+p*g.dataset.s*900+"px)");
+  ht.style.transform="translateY("+(-p*150)+"px) scale("+(1-p*.14)+")";
+  ht.style.opacity=Math.max(0,1-p*1.7);
+  vl.style.opacity=p*.6;cue.style.opacity=Math.max(0,1-p*5);
+})}
+if(!RM){addEventListener("scroll",onScroll,{passive:true});addEventListener("resize",onScroll);onScroll()}
+const rvs=document.querySelectorAll(".rv");
+if("IntersectionObserver" in window){const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}}),{threshold:.12});rvs.forEach((el,i)=>{el.style.transitionDelay=(i%2?.08:0)+"s";io.observe(el)})}else rvs.forEach(el=>el.classList.add("in"));
+
+const KD="jee2027-study-v1",SN={p:"Physics",c:"Chemistry",m:"Maths"},SC={p:"#2447f5",c:"#12a36a",m:"#f0a202"},DUR={f:1500,s:300,l:900};
+let D={log:{},goals:{p:120,c:120,m:120},targets:null,notes:{},cards:{}};
+try{Object.assign(D,JSON.parse(localStorage.getItem(KD)||"{}"))}catch(e){}
+D.targets=D.targets||[{id:1,type:"hr",n:100,dl:""},{id:2,type:"chap",n:82,dl:""}];
+const $=id=>document.getElementById(id),esc=x=>String(x).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const dk=(d=new Date())=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const back=n=>{const d=new Date();d.setDate(d.getDate()-n);return dk(d)};
+const dsec=k=>{const x=D.log[k];return x?(x.p||0)+(x.c||0)+(x.m||0):0};
+const p2=n=>String(n).padStart(2,"0"),hm=t=>p2(Math.floor(t/3600))+":"+p2(Math.floor(t%3600/60))+":"+p2(t%60);
+const mm=t=>Math.round(t/60),hrm=t=>Math.floor(t/3600)+"h "+Math.floor(t%3600/60)+"m";
+function renderTimers(){$("v-timers").innerHTML=`<div class="g2"><div class="card" style="text-align:center"><h3>Focus timer</h3>
+<div class="modes">${[["f","Focus 25"],["s","Short break 5"],["l","Long break 15"]].map(([m,l])=>`<button class="btn" data-a="pmode" data-m="${m}" aria-pressed="false">${l}</button>`).join("")}</div>
+<div class="ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="52" fill="none" stroke="var(--line)" stroke-width="8"/><circle id="pr" cx="60" cy="60" r="52" fill="none" stroke="var(--acc)" stroke-width="8" stroke-linecap="round" stroke-dasharray="326.7" transform="rotate(-90 60 60)"/></svg><b id="pt">25:00</b></div>
+<p><label class="mu">Log focus time to <select class="in" data-a="psub">${Object.keys(SN).map(s=>`<option value="${s}" ${PM.sub===s?"selected":""}>${SN[s]}</option>`).join("")}</select></label></p>
+<button class="btn p" id="pgo" data-a="pgo">Start</button> <button class="btn" data-a="prst">Reset</button><p class="mu" id="pn"></p></div>
+<div>${Object.keys(SN).map(s=>`<div class="card"><h3 style="color:${SC[s]}">${SN[s]} today</h3><div class="big" id="ts-${s}"></div><div class="bar"><i id="tb-${s}" style="background:${SC[s]}"></i></div><p class="mu" id="tl-${s}"></p>
+<label class="mu">Daily goal (min) <input class="in" type="number" min="0" max="1440" style="width:90px" value="${D.goals[s]}" data-a="goal" data-s="${s}"></label> <button class="btn p" id="tg-${s}" data-a="sgo" data-s="${s}">Start</button></div>`).join("")}</div></div>`;paintTimers()}
+/* goals */
+const CT={hr:["Study hours","hours"],chap:["Chapters completed","chapters"]};
+D.targets=D.targets.filter(g=>g.type!=="streak");
+function renderGoals(){const done=SUBJ.flatMap(ids).filter(id=>score(id)===1).length;let hrs=0;for(const k in D.log)hrs+=dsec(k)/3600;
+  const rows=D.targets.map(g=>{const v=g.type==="hr"?hrs:done,pc=Math.min(100,v/g.n*100),left=g.dl?Math.round((new Date(g.dl+"T00:00")-new Date(dk()+"T00:00"))/864e5):null;
+    return `<div class="card"><div class="hb" style="border:0;padding:0 0 8px"><b style="flex:1">${CT[g.type][0]}: ${g.n} ${CT[g.type][1]}</b><button class="btn" data-a="gdel" data-id="${g.id}" aria-label="Delete goal">✕</button></div><div class="bar"><i style="width:${pc}%;background:${pc>=100?"var(--ok)":"var(--acc)"}"></i></div><p class="mu">${g.type==="hr"?v.toFixed(1):Math.floor(v)} / ${g.n} · ${Math.round(pc)}%${left!==null?" · "+(left>=0?left+" days left":"deadline passed"):""}</p></div>`}).join("");
+  $("v-goals").innerHTML=`<div class="card"><h3>New goal</h3><div class="frm" style="justify-content:flex-start"><select class="in" id="gt"><option value="hr">Study hours</option><option value="chap">Chapters completed</option></select><input class="in" id="gn" type="number" min="1" placeholder="Target" style="width:110px"><input class="in" id="gd" type="date" title="Optional deadline"><button class="btn p" data-a="gadd">Add goal</button></div><p class="mu">Progress fills in automatically from your timers and finished chapters.</p></div>${rows}`}
+/* notes + flashcards */
+const BI={
+p0_1:[["Dimensional formula of force?","[M L T⁻²]"],["Dimensions of Planck's constant h?","[M L² T⁻¹]"]],
+p0_2:[["Equations of motion for constant acceleration?","v = u + at; s = ut + ½at²; v² = u² + 2as"],["Displacement in the nth second?","s_n = u + a(2n − 1)/2"]],
+p0_3:[["Range of a projectile?","R = u² sin2θ / g"],["Maximum height of a projectile?","H = u² sin²θ / (2g)"],["Time of flight of a projectile?","T = 2u sinθ / g"]],
+p0_4:[["Maximum static friction force?","f_max = μ_s N"],["Angle of repose in terms of μ?","tanθ = μ"]],
+p0_5:[["Work-energy theorem?","Net work = change in kinetic energy: W = ½mv² − ½mu²"],["Force from potential energy?","F = −dU/dx"]],
+p0_6:[["Final velocity in a perfectly inelastic collision?","v = (m₁u₁ + m₂u₂)/(m₁ + m₂)"],["Coefficient of restitution e?","e = speed of separation / speed of approach (e = 1 elastic, e = 0 perfectly inelastic)"]],
+p0_7:[["Moment of inertia of a solid sphere about its diameter?","(2/5)MR²"],["Torque and angular acceleration?","τ = Iα"],["Kinetic energy of a body rolling without slipping?","½mv²(1 + k²/R²), with v = ωR"]],
+p0_8:[["Energy of the nth level of hydrogen?","E_n = −13.6/n² eV"],["Radius of the nth Bohr orbit?","r_n = 0.529 n²/Z Å"]],
+p1_0:[["de Broglie wavelength?","λ = h/p = h/mv"],["Einstein's photoelectric equation?","hν = φ + K_max"]],
+p1_1:[["Radioactive decay law?","N = N₀e^(−λt)"],["Half-life and decay constant?","T½ = 0.693/λ"]],
+p1_2:[["Average kinetic energy per molecule of an ideal gas?","(3/2)kT"],["RMS speed of gas molecules?","v_rms = √(3RT/M)"]],
+p1_3:[["Stefan–Boltzmann law?","P = eσAT⁴"],["Wien's displacement law?","λ_max T = b ≈ 2.9 × 10⁻³ m·K"]],
+p1_4:[["First law of thermodynamics?","ΔQ = ΔU + W"],["Work done in an isothermal process?","W = nRT ln(V₂/V₁)"],["Efficiency of a Carnot engine?","η = 1 − T₂/T₁"]],
+p2_0:[["Bernoulli's equation?","P + ½ρv² + ρgh = constant"],["Terminal velocity of a sphere in a viscous fluid?","v_t = 2r²(ρ − σ)g / 9η"]],
+p2_1:[["Young's modulus?","Y = stress/strain = FL/(AΔL)"],["Elastic energy stored per unit volume?","½ × stress × strain"]],
+p2_2:[["Time period of a spring-mass system?","T = 2π√(m/k)"],["Time period of a simple pendulum?","T = 2π√(L/g)"]],
+p2_3:[["Electric field of an infinite line charge?","E = λ/(2πε₀r)"],["Gauss's law?","∮E·dA = q_enc/ε₀"]],
+p2_4:[["Escape velocity from Earth?","v_e = √(2gR) ≈ 11.2 km/s"],["Orbital velocity near Earth's surface?","v_o = √(gR) ≈ 7.9 km/s"]],
+p3_0:[["Energy stored in a capacitor?","U = ½CV² = Q²/2C"],["Capacitance of a parallel plate capacitor?","C = ε₀A/d"]],
+p3_1:[["Balanced Wheatstone bridge condition?","P/Q = R/S"],["Current in terms of drift velocity?","I = nAe·v_d"]],
+p3_2:[["Magnetic field at the centre of a circular loop?","B = μ₀I/2R"],["Lorentz force?","F = q(E + v × B)"]],
+p3_3:[["Curie's law?","χ = C/T (paramagnetic materials)"],["Relation between B, H and M?","B = μ₀(H + M)"]],
+p4_0:[["Impedance of a series LCR circuit?","Z = √(R² + (X_L − X_C)²)"],["Resonant frequency of series LCR?","f = 1/(2π√(LC))"]],
+p4_1:[["Faraday's law of induction?","ε = −dΦ/dt"],["Motional emf?","ε = Blv"]],
+p4_2:[["Fringe width in Young's double slit?","β = λD/d"],["Condition for constructive interference?","Path difference = nλ"]],
+p4_3:[["Lens maker's formula?","1/f = (μ − 1)(1/R₁ − 1/R₂)"],["Mirror formula?","1/v + 1/u = 1/f"]],
+p5_0:[["Speed of sound in a gas?","v = √(γP/ρ)"],["Beat frequency?","|f₁ − f₂|"]],
+p5_1:[["Speed of light in terms of ε₀ and μ₀?","c = 1/√(μ₀ε₀)"],["Current gain of a transistor?","β = I_C/I_B"]],
+c0_0:[["Molarity vs molality?","Molarity: moles per litre of solution. Molality: moles per kg of solvent"],["Number of moles?","n = mass/molar mass = N/N_A = V(STP)/22.4 L"]],
+c0_1:[["Energy of nth level for a hydrogen-like ion?","E_n = −13.6 Z²/n² eV"],["Number of radial nodes?","n − l − 1"]],
+c0_2:[["Raoult's law for two volatile liquids?","P_total = x_A P_A° + x_B P_B°"],["Osmotic pressure?","π = CRT"]],
+c0_3:[["Nernst equation at 298 K?","E = E° − (0.0591/n) log Q"],["Relation between ΔG° and E°?","ΔG° = −nFE°"]],
+c0_4:[["Integrated rate law for a first-order reaction?","k = (2.303/t) log([A]₀/[A])"],["Half-life of a first-order reaction?","t½ = 0.693/k"]],
+c0_5:[["Relation between Kp and Kc?","Kp = Kc(RT)^Δn"],["Le Chatelier's principle?","An equilibrium shifts to oppose any change in concentration, pressure or temperature"]],
+c0_6:[["Henderson–Hasselbalch equation for an acidic buffer?","pH = pKa + log([salt]/[acid])"],["pH and pOH at 25 °C?","pH + pOH = 14"]],
+c1_0:[["Oxidation number of Mn in KMnO₄?","+7"],["What is disproportionation?","One species is oxidised and reduced at the same time, e.g. Cl₂ + OH⁻ → Cl⁻ + ClO⁻"]],
+c1_1:[["Spontaneity criterion?","ΔG = ΔH − TΔS < 0"],["Cp − Cv for an ideal gas?","R (per mole)"]],
+c1_2:[["Atomic radius trend?","Decreases across a period, increases down a group"],["Most electronegative element?","Fluorine (4.0 on the Pauling scale)"]],
+c1_3:[["Hybridisation and shape of SF₆?","sp³d², octahedral"],["Bond order (MOT)?","(N_b − N_a)/2"]],
+c2_0:[["Stability order of carbocations?","3° > 2° > 1° > methyl"],["What is hyperconjugation?","Delocalisation of σ electrons of adjacent C–H bonds into an empty p orbital or π bond"]],
+c2_1:[["Condition for optical activity?","The molecule is chiral (no plane or centre of symmetry)"],["Stereoisomers with n different chiral centres?","2ⁿ"]],
+c2_2:[["Markovnikov's rule?","In HX addition to an unsymmetrical alkene, H adds to the carbon with more hydrogens"],["Products of reductive ozonolysis of alkenes?","Aldehydes and/or ketones"]],
+c2_3:[["Substrate preferred in SN1 vs SN2?","SN1: 3° (stable carbocation). SN2: 1° (least hindered)"],["Saytzeff's rule?","Elimination gives the more substituted alkene as the major product"]],
+c3_0:[["What does the Lucas test distinguish?","1°, 2°, 3° alcohols: 3° turbid at once, 2° in about 5 min, 1° none at room temperature"],["Product of the Reimer–Tiemann reaction on phenol?","Salicylaldehyde (CHCl₃ / NaOH)"]],
+c3_1:[["Which compounds give Tollens' test?","Aldehydes (silver mirror)"],["Requirement for aldol condensation?","Aldehyde or ketone with α-hydrogen, in dilute base"]],
+c3_2:[["Reactivity order of acid derivatives?","Acid chloride > anhydride > ester > amide"],["Hell–Volhard–Zelinsky reaction?","α-halogenation of a carboxylic acid using X₂ / red P"]],
+c3_3:[["Hinsberg reagent?","Benzenesulfonyl chloride; separates 1°, 2° and 3° amines"],["Basic strength of methylamines in water?","(CH₃)₂NH > CH₃NH₂ > (CH₃)₃N > NH₃"]],
+c4_0:[["Glucose vs fructose?","Glucose is an aldohexose; fructose is a ketohexose"],["Bond linking amino acids in a protein?","Peptide (amide) bond"]],
+c4_1:[["Spin-only magnetic moment?","μ = √(n(n + 2)) BM, n = unpaired electrons"],["Octahedral crystal field splitting?","d orbitals split into t₂g (lower) and e_g (higher) by Δo"]],
+c4_2:[["Why do transition metals show variable oxidation states?","Small energy gap between (n−1)d and ns electrons"],["What is lanthanoid contraction?","Steady decrease in Ln³⁺ size across the series due to poor shielding by 4f electrons"]],
+c4_3:[["Oxidation states of N in N₂O, NO and NO₂?","+1, +2, +4"],["Shape of XeF₄?","Square planar (sp³d²)"]],
+c5_0:[["Brown ring test detects?","Nitrate ion (NO₃⁻)"],["Flame test colour of Ca²⁺?","Brick red"]],
+m0_0:[["|x| < a means?","−a < x < a"],["a³ + b³ = ?","(a + b)(a² − ab + b²)"]],
+m0_1:[["Roots of ax² + bx + c = 0?","x = [−b ± √(b² − 4ac)] / 2a"],["Sum and product of roots?","−b/a and c/a"]],
+m0_2:[["Sum of n terms of an AP?","S = (n/2)[2a + (n − 1)d]"],["Sum to infinity of a GP (|r| < 1)?","a/(1 − r)"]],
+m0_3:[["sin(A + B)?","sinA cosB + cosA sinB"],["cos2θ in three forms?","cos²θ − sin²θ = 2cos²θ − 1 = 1 − 2sin²θ"]],
+m0_4:[["General solution of sinθ = sinα?","θ = nπ + (−1)ⁿα"],["General solution of cosθ = cosα?","θ = 2nπ ± α"]],
+m0_5:[["nCr formula?","n!/(r!(n − r)!)"],["Circular permutations of n distinct objects?","(n − 1)!"]],
+m0_6:[["General term in (x + a)ⁿ?","T(r+1) = ⁿC_r x^(n−r) a^r"],["Sum of all binomial coefficients?","2ⁿ"]],
+m1_0:[["Distance of (x₁, y₁) from ax + by + c = 0?","|ax₁ + by₁ + c| / √(a² + b²)"],["Angle between lines with slopes m₁ and m₂?","tanθ = |(m₁ − m₂)/(1 + m₁m₂)|"]],
+m1_1:[["Circle with centre (h, k) and radius r?","(x − h)² + (y − k)² = r²"],["Condition for y = mx + c to touch x² + y² = a²?","c² = a²(1 + m²)"]],
+m1_2:[["Focus and directrix of y² = 4ax?","Focus (a, 0); directrix x = −a"],["Latus rectum of y² = 4ax?","4a"]],
+m1_3:[["Eccentricity of x²/a² + y²/b² = 1 (a > b)?","e = √(1 − b²/a²)"],["Latus rectum of an ellipse?","2b²/a"]],
+m1_4:[["Eccentricity of x²/a² − y²/b² = 1?","e = √(1 + b²/a²)"],["Asymptotes of x²/a² − y²/b² = 1?","y = ±(b/a)x"]],
+m2_0:[["Relation between A and adj A?","A(adj A) = |A| I"],["(AB)ᵀ = ?","BᵀAᵀ"]],
+m2_1:[["|adj A| for an n×n matrix?","|A|ⁿ⁻¹"],["Cramer's rule for x?","x = D₁/D, with D ≠ 0"]],
+m2_2:[["When is a relation an equivalence relation?","When it is reflexive, symmetric and transitive"],["n(A ∪ B)?","n(A) + n(B) − n(A ∩ B)"]],
+m2_3:[["When is a function invertible?","When it is one-one and onto"],["Periods of sin x and tan x?","2π and π"]],
+m2_4:[["Principal value range of sin⁻¹x?","[−π/2, π/2]"],["sin⁻¹x + cos⁻¹x = ?","π/2, for x ∈ [−1, 1]"]],
+m3_0:[["lim x→0 (sin x)/x = ?","1"],["lim x→0 (1 + x)^(1/x) = ?","e"]],
+m3_1:[["Condition for continuity at x = a?","LHL = RHL = f(a)"],["Is |x| differentiable at 0?","No (sharp corner)"]],
+m3_2:[["Tangent to y = f(x) at (x₁, y₁)?","y − y₁ = f′(x₁)(x − x₁)"],["Second derivative test for a maximum?","f′(c) = 0 and f″(c) < 0"]],
+m3_3:[["∫ dx/x = ?","ln|x| + C"],["Integration by parts?","∫u v dx = u∫v dx − ∫(u′ ∫v dx) dx"]],
+m3_4:[["∫₀ᵃ f(x) dx = ?","∫₀ᵃ f(a − x) dx"],["∫ from −a to a of f(x) dx when f is odd?","0"]],
+m4_0:[["Area under y = f(x) from a to b?","∫ₐᵇ |f(x)| dx"],["Area of the ellipse x²/a² + y²/b² = 1?","πab"]],
+m4_1:[["Integrating factor of dy/dx + Py = Q?","e^(∫P dx)"],["Order and degree of (y″)² + y′ = 0?","Order 2, degree 2"]],
+m4_2:[["Dot product a·b?","|a||b| cosθ"],["Area of a parallelogram with sides a and b?","|a × b|"]],
+m4_3:[["Distance between skew lines?","|(a₂ − a₁)·(b₁ × b₂)| / |b₁ × b₂|"],["Direction cosines satisfy?","l² + m² + n² = 1"]],
+m5_0:[["Polar form of z = x + iy?","z = r(cosθ + i sinθ), r = |z|"],["Sum of the cube roots of unity?","1 + ω + ω² = 0"]],
+m5_1:[["Bayes' theorem?","P(A|B) = P(B|A)P(A) / P(B)"],["Binomial probability of r successes?","ⁿC_r p^r q^(n−r)"]],
+m5_2:[["Variance?","σ² = Σ(xᵢ − x̄)²/n = Σxᵢ²/n − x̄²"],["Mean deviation about the mean?","Σ|xᵢ − x̄| / n"]]};
+const BI2={
+p0_0:[["Derivatives of xⁿ, sin x, cos x, eˣ, ln x?","nxⁿ⁻¹; cos x; −sin x; eˣ; 1/x"],["Dot and cross product magnitudes?","A·B = AB cosθ; |A × B| = AB sinθ"],["Small-angle approximations?","sinθ ≈ θ, tanθ ≈ θ, cosθ ≈ 1 − θ²/2 (θ in radians)"],["Binomial approximation for small x?","(1 + x)ⁿ ≈ 1 + nx"]],
+p0_1:[["Dimensions of energy, pressure and power?","[ML²T⁻²]; [ML⁻¹T⁻²]; [ML²T⁻³]"],["Principle of homogeneity?","Every term in a valid physical equation has the same dimensions"],["Dimensions of G?","[M⁻¹L³T⁻²]"]],
+p0_2:[["Average velocity vs average speed?","Velocity = displacement/time; speed = total distance/time"],["Free fall from rest: v and h after time t?","v = gt; h = ½gt²"],["Relative velocity of A w.r.t. B in 1D?","v_AB = v_A − v_B"]],
+p0_3:[["Trajectory equation of a projectile?","y = x tanθ − gx²/(2u²cos²θ)"],["Centripetal acceleration?","a_c = v²/r = ω²r"],["Minimum time to cross a river?","t = d/v_boat (head perpendicular to the current)"]],
+p0_4:[["Newton's second law?","F = dp/dt = ma"],["Banking angle without friction?","tanθ = v²/(rg)"],["Acceleration in an Atwood machine?","a = (m₁ − m₂)g/(m₁ + m₂)"],["Acceleration down a rough incline?","a = g(sinθ − μ cosθ)"]],
+p0_5:[["Power?","P = dW/dt = F·v"],["Potential energy of a spring?","U = ½kx²"],["Minimum speed at top and bottom of a vertical circle (string)?","v_top = √(gr); v_bottom = √(5gr)"]],
+p0_6:[["Centre of mass of a system?","x_cm = Σmᵢxᵢ / Σmᵢ"],["Impulse?","J = FΔt = Δp"],["Velocities after 1D elastic collision (m₂ at rest)?","v₁ = (m₁ − m₂)u/(m₁ + m₂); v₂ = 2m₁u/(m₁ + m₂)"]],
+p0_7:[["Moment of inertia of ring, disc and rod (centre)?","MR²; ½MR²; ML²/12"],["Angular momentum?","L = Iω = r × p"],["Parallel and perpendicular axis theorems?","I = I_cm + Md²; I_z = I_x + I_y (planar body)"],["Rotational kinetic energy?","K = ½Iω²"]],
+p0_8:[["Bohr's quantisation condition?","mvr = nh/2π"],["Rydberg formula?","1/λ = RZ²(1/n₁² − 1/n₂²)"],["Speed of electron in nth Bohr orbit?","v_n = 2.18 × 10⁶ (Z/n) m/s"]],
+p1_0:[["Threshold frequency and work function?","φ = hν₀ = hc/λ₀"],["Stopping potential?","eV₀ = K_max = hν − φ"],["de Broglie wavelength of an electron through V volts?","λ = 12.27/√V Å"]],
+p1_1:[["Nuclear radius?","R = R₀A^(1/3), R₀ ≈ 1.2 fm"],["Binding energy?","BE = Δm c² = [Zm_p + (A−Z)m_n − M]c²; 1 u = 931.5 MeV"],["Activity?","A = λN = A₀e^(−λt)"],["Mean life?","τ = 1/λ = 1.44 T½"]],
+p1_2:[["Ideal gas equation?","PV = nRT = NkT"],["Internal energy with f degrees of freedom?","U = (f/2)nRT"],["γ for monatomic and diatomic gases?","5/3 and 7/5 (γ = 1 + 2/f)"],["Mean free path?","λ = kT/(√2 π d² P)"]],
+p1_3:[["Expansion coefficients relation?","β = 2α, γ = 3α"],["Heat required?","Q = mcΔT; Q = mL for phase change"],["Newton's law of cooling?","dT/dt = −k(T − T₀)"],["Rate of heat conduction?","Q/t = kAΔT/L"]],
+p1_4:[["Adiabatic process equations?","PVᵞ = const; TVᵞ⁻¹ = const"],["Work in an adiabatic process?","W = (P₁V₁ − P₂V₂)/(γ − 1)"],["COP of a refrigerator?","T₂/(T₁ − T₂)"]],
+p2_0:[["Pressure at depth h?","P = P₀ + ρgh"],["Equation of continuity?","A₁v₁ = A₂v₂"],["Excess pressure in a drop and a soap bubble?","2T/R; 4T/R"],["Capillary rise?","h = 2T cosθ/(rρg)"]],
+p2_1:[["Bulk modulus?","B = −ΔP/(ΔV/V)"],["Shear modulus?","G = shear stress/shear strain"],["Extension of a wire?","ΔL = FL/(AY)"]],
+p2_2:[["Equation of SHM?","x = A sin(ωt + φ); a = −ω²x"],["Velocity and total energy in SHM?","v = ω√(A² − x²); E = ½mω²A²"],["Time period of a physical pendulum?","T = 2π√(I/mgd)"]],
+p2_3:[["Coulomb's law?","F = kq₁q₂/r², k = 9 × 10⁹ N m² C⁻²"],["Potential due to a point charge?","V = kq/r"],["Dipole field on axis and equator?","2kp/r³; kp/r³"],["Torque and energy of a dipole?","τ = p × E; U = −p·E"]],
+p2_4:[["Newton's law of gravitation?","F = Gm₁m₂/r²"],["g at depth d and height h?","g(1 − d/R); g(1 − 2h/R) for small h"],["Kepler's third law?","T² ∝ r³"],["Gravitational PE and satellite total energy?","U = −GMm/r; E = −GMm/2r"]],
+p3_0:[["Capacitors in series and parallel?","1/C = Σ1/Cᵢ; C = ΣCᵢ"],["Capacitance with a dielectric?","C = KC₀"],["Force between capacitor plates?","F = Q²/(2ε₀A)"]],
+p3_1:[["Ohm's law and resistance?","V = IR; R = ρl/A"],["Kirchhoff's laws?","ΣI = 0 at a junction; ΣV = 0 around a loop"],["Electrical power?","P = VI = I²R = V²/R"],["Terminal voltage of a cell?","V = ε − Ir"],["Temperature dependence of resistance?","R = R₀(1 + αΔT)"]],
+p3_2:[["Biot–Savart law?","dB = (μ₀/4π) I dl × r̂ / r²"],["Field of a long wire and of a solenoid?","μ₀I/2πr; μ₀nI"],["Force on a current-carrying wire?","F = I l × B"],["Radius and period of a charge in B?","r = mv/qB; T = 2πm/qB"],["Ampere's circuital law?","∮B·dl = μ₀I_enc"]],
+p3_3:[["Magnetic moment of a current loop?","M = NIA"],["Torque on a magnetic dipole?","τ = M × B"],["Susceptibility and relative permeability?","χ = M/H; μ_r = 1 + χ"]],
+p4_0:[["RMS values of AC?","I_rms = I₀/√2; V_rms = V₀/√2"],["Reactances?","X_L = ωL; X_C = 1/ωC"],["Average AC power?","P = V_rms I_rms cosφ; cosφ = R/Z"],["Transformer ratio?","V_s/V_p = N_s/N_p = I_p/I_s"]],
+p4_1:[["Self inductance and stored energy?","ε = −L dI/dt; U = ½LI²"],["Lenz's law?","Induced current opposes the change in flux that produces it"],["Mutual inductance?","ε = −M dI/dt"],["Magnetic flux?","Φ = BA cosθ"]],
+p4_2:[["Snell's law and Brewster's law?","μ = sin i/sin r; tanθ_p = μ"],["Single slit minima and central width?","a sinθ = nλ; width = 2λD/a"],["Resultant intensity?","I = I₁ + I₂ + 2√(I₁I₂) cosφ"],["Phase difference?","φ = (2π/λ) × path difference"]],
+p4_3:[["Power of a lens and combination?","P = 1/f; P = P₁ + P₂"],["Magnification by mirror and lens?","m = −v/u (mirror); m = v/u (lens)"],["Prism: deviation and refractive index?","δ = (μ − 1)A; μ = sin[(A + δ_m)/2] / sin(A/2)"],["Critical angle?","sinC = 1/μ"],["Magnifying power of telescope and microscope?","Telescope: f_o/f_e; microscope ≈ (L/f_o)(D/f_e)"]],
+p5_0:[["Wave equation and speed?","y = A sin(kx − ωt); v = fλ = ω/k"],["Speed on a string?","v = √(T/μ)"],["Fundamental frequency: string, closed pipe, open pipe?","v/2L; v/4L; v/2L"],["Doppler effect?","f′ = f(v ± v_o)/(v ∓ v_s)"],["Sound intensity level?","β = 10 log(I/I₀) dB"]],
+p5_1:[["Band gap of conductor, semiconductor, insulator?","Overlapping bands; Eg < 3 eV; Eg large"],["Universal logic gates?","NAND and NOR"],["E₀ and B₀ in an EM wave?","E₀/B₀ = c; energy shared equally by E and B"],["EM spectrum by increasing frequency?","Radio, microwave, infrared, visible, UV, X-ray, gamma"],["Depletion layer in a p–n junction?","Narrower in forward bias; wider in reverse bias"]],
+c0_0:[["Avogadro number and molar volume at STP?","6.022 × 10²³ mol⁻¹; 22.4 L"],["Molecular vs empirical formula?","Molecular formula = n × empirical formula"],["Limiting reagent?","The reactant consumed first; it decides the product amount"],["Percentage composition?","(mass of element/molar mass) × 100"]],
+c0_1:[["Heisenberg uncertainty principle?","Δx · Δp ≥ h/4π"],["Aufbau, Pauli, Hund's rules?","Lowest energy first; no two electrons with all four quantum numbers equal; maximise unpaired spins"],["Wave number of a spectral line?","ν̄ = R_H Z²(1/n₁² − 1/n₂²), R_H = 1.097 × 10⁷ m⁻¹"],["Photon energy?","E = hν = hc/λ"]],
+c0_2:[["Four colligative properties?","Relative lowering of vapour pressure, elevation of boiling point, depression of freezing point, osmotic pressure"],["ΔT_b and ΔT_f?","ΔT_b = iK_b m; ΔT_f = iK_f m"],["van't Hoff factor for association and dissociation?","i < 1 for association; i > 1 for dissociation"],["Henry's law?","p = K_H x"]],
+c0_3:[["Faraday's first law?","m = ZIt = (M/nF)It"],["Kohlrausch's law?","Λ°m = ν₊λ°₊ + ν₋λ°₋"],["Conductivity and molar conductivity?","κ = G(l/A); Λm = κ × 1000/M"],["E°cell and equilibrium constant?","E°cell = (0.0591/n) log K (298 K)"]],
+c0_4:[["Rate law and order?","Rate = k[A]ˣ[B]ʸ; order = x + y"],["Arrhenius equation?","k = Ae^(−Ea/RT); log(k₂/k₁) = (Ea/2.303R)(1/T₁ − 1/T₂)"],["Zero-order rate law and half-life?","[A] = [A]₀ − kt; t½ = [A]₀/2k"],["Units of k for order n?","(mol L⁻¹)^(1−n) s⁻¹"]],
+c0_5:[["Relation between ΔG° and K?","ΔG° = −RT ln K"],["van't Hoff equation?","ln(K₂/K₁) = (ΔH°/R)(1/T₁ − 1/T₂)"],["Direction of reaction from Q and K?","Q < K: forward; Q > K: backward; Q = K: equilibrium"]],
+c0_6:[["Ostwald's dilution law?","α = √(Ka/C); [H⁺] = √(KaC)"],["Ksp for AₓBᵧ?","Ksp = xˣ yʸ S^(x+y)"],["pH of a salt of weak acid and strong base?","pH = ½(pKw + pKa + log C)"],["Common ion effect?","A common ion lowers the solubility or ionisation of a weak electrolyte"]],
+c1_0:[["Equivalent weight in redox?","M/(n-factor)"],["Balancing redox in acidic medium?","Half-reactions: balance atoms, O with H₂O, H with H⁺, charge with e⁻"],["Oxidising vs reducing agent?","Oxidising agent gains electrons; reducing agent loses electrons"]],
+c1_1:[["ΔH from bond energies?","ΔH = Σ(bonds broken) − Σ(bonds formed)"],["Hess's law?","Total enthalpy change is independent of the path"],["Relation between ΔH and ΔU?","ΔH = ΔU + Δn_g RT"],["Entropy change (reversible)?","ΔS = q_rev/T"],["Kirchhoff's equation?","ΔH₂ − ΔH₁ = ΔCp(T₂ − T₁)"]],
+c1_2:[["Ionisation enthalpy exceptions?","Be > B and N > O"],["Most negative electron gain enthalpy?","Cl (more negative than F)"],["Size order of isoelectronic species?","O²⁻ > F⁻ > Na⁺ > Mg²⁺ (decreases with nuclear charge)"],["Diagonal relationships?","Li–Mg, Be–Al, B–Si"]],
+c1_3:[["Formal charge?","FC = V − N − B/2"],["Shapes of NH₃, H₂O, ClF₃?","Pyramidal; bent; T-shaped"],["Fajans' rules?","Small cation, large anion and high charges increase covalent character"],["Bond order of O₂, O₂⁺, O₂⁻?","2, 2.5, 1.5"],["Dipole moment?","μ = q × d"]],
+c2_0:[["Inductive, resonance and electromeric effects?","Inductive: permanent, through σ bonds; resonance: π delocalisation; electromeric: temporary, on attack by a reagent"],["Effect of substituents on acidity of carboxylic acids?","EWG increases acidity; EDG decreases it"],["Nucleophile vs electrophile?","Nucleophile donates an electron pair; electrophile accepts one"],["Free radical stability?","3° > 2° > 1° > methyl"]],
+c2_1:[["Geometrical isomerism condition?","Restricted rotation with two different groups on each carbon of the double bond"],["Nomenclature used for E/Z and R/S?","CIP priority rules"],["Enantiomers vs diastereomers?","Enantiomers are non-superimposable mirror images; diastereomers are not mirror images"],["Meso compound?","Has chiral centres but is optically inactive because of internal symmetry"]],
+c2_2:[["Wurtz reaction?","2R–X + 2Na (dry ether) → R–R + 2NaX"],["Kolbe's electrolysis?","Sodium salt of a carboxylic acid gives an alkane at the anode"],["Anti-Markovnikov addition of HBr?","Occurs in presence of peroxide (Kharasch effect)"],["Test for terminal alkynes?","Tollens' reagent or ammoniacal Cu₂Cl₂ gives a precipitate"],["Hückel's rule?","Planar, cyclic, fully conjugated with (4n + 2) π electrons"]],
+c2_3:[["Finkelstein and Swarts reactions?","R–X + NaI (acetone) → R–I; R–Cl + AgF → R–F"],["Grignard reagent formation?","R–X + Mg (dry ether) → RMgX"],["Sandmeyer reaction?","ArN₂⁺X⁻ + CuX → Ar–X (X = Cl, Br, CN)"],["SN2 reactivity order?","CH₃X > 1° > 2° > 3°"]],
+c3_0:[["Acidity order of alcohol, phenol, carboxylic acid?","Alcohol < phenol < carboxylic acid"],["Williamson synthesis?","R–ONa + R′–X → R–O–R′"],["Dehydration of ethanol with conc. H₂SO₄?","Ethene at 443 K; diethyl ether at 413 K"],["Kolbe's reaction of phenol?","Sodium phenoxide + CO₂ gives salicylic acid"],["Oxidation with PCC?","1° alcohol gives aldehyde; 2° alcohol gives ketone"]],
+c3_1:[["Cannizzaro reaction?","Aldehydes without α-H in conc. NaOH give an alcohol and a carboxylate"],["Clemmensen and Wolff–Kishner reductions?","Zn–Hg/HCl and NH₂NH₂/KOH reduce C=O to CH₂"],["Rosenmund reduction?","Acid chloride + H₂/Pd–BaSO₄ gives aldehyde"],["Iodoform test is given by?","Methyl ketones (CH₃CO–) and CH₃CH(OH)– compounds"],["Reactivity toward nucleophilic addition?","Aldehydes > ketones"]],
+c3_2:[["Fischer esterification?","RCOOH + R′OH ⇌ RCOOR′ + H₂O (acid catalysed)"],["Hofmann bromamide reaction?","RCONH₂ + Br₂/NaOH gives RNH₂ (one carbon less)"],["Substituent effect in benzoic acid?","EWG increases acid strength; EDG decreases it"]],
+c3_3:[["Gabriel phthalimide synthesis gives?","Pure primary aliphatic amines"],["Carbylamine test?","1° amine + CHCl₃ + KOH gives a foul-smelling isocyanide"],["Diazotisation conditions?","ArNH₂ + NaNO₂ + HCl at 273–278 K"],["Azo dye coupling?","Diazonium salt couples with phenol or aniline at the para position"]],
+c4_0:[["Which sugars are reducing?","Those with a free aldehyde or hemiacetal group; sucrose is non-reducing"],["Glycosidic linkage in sucrose, maltose, lactose?","α,β-1,2; α-1,4; β-1,4"],["Nature of amino acids?","Exist as zwitterions; isoelectric point is the pH of zero net charge"],["DNA vs RNA?","DNA: deoxyribose and thymine; RNA: ribose and uracil"]],
+c4_1:[["IUPAC naming order for complexes?","Ligands (alphabetical), then metal with oxidation state"],["[Ni(CO)₄] and [Ni(CN)₄]²⁻ geometry?","Tetrahedral (sp³); square planar (dsp²)"],["Isomerism in coordination compounds?","Structural (ionisation, linkage, coordination) and stereo (geometrical, optical)"],["EAN rule?","EAN = Z − oxidation state + 2 × coordination number"],["Spectrochemical series (weak to strong)?","I⁻ < Br⁻ < Cl⁻ < F⁻ < OH⁻ < H₂O < NH₃ < en < CN⁻ < CO"]],
+c4_2:[["Configuration of Cr and Cu?","[Ar]3d⁵4s¹ and [Ar]3d¹⁰4s¹"],["KMnO₄ in acidic medium?","MnO₄⁻ + 8H⁺ + 5e⁻ → Mn²⁺ + 4H₂O"],["Origin of colour in transition metal ions?","d–d transitions"],["Preparation of K₂Cr₂O₇?","Chromite ore fused with Na₂CO₃ and air, then acidified and treated with KCl"]],
+c4_3:[["Ostwald process?","NH₃ → NO → NO₂ → HNO₃"],["Contact process?","SO₂ + O₂ (V₂O₅) → SO₃ → oleum → H₂SO₄"],["Acidic strength of hydrides down a group?","Increases down the group"],["Shapes of XeF₂, XeF₆, XeO₃?","Linear; distorted octahedral; pyramidal"],["Basicity of H₃PO₃?","Dibasic"]],
+c5_0:[["AgNO₃ test for Cl⁻, Br⁻, I⁻?","White, pale yellow, yellow precipitate"],["Test for sulphate?","White precipitate with BaCl₂, insoluble in HCl"],["Group reagents for cation groups II and III?","H₂S in dilute HCl; NH₄OH with NH₄Cl"],["Test for Fe³⁺ with KSCN?","Blood-red colour"],["Test for NH₄⁺?","Nessler's reagent gives a brown precipitate"]],
+m0_0:[["Logarithm rules?","log(ab) = log a + log b; log aᵇ = b log a"],["|x − a| < r means?","a − r < x < a + r"],["AM–GM inequality?","(a + b)/2 ≥ √(ab), equality when a = b"]],
+m0_1:[["Nature of roots from D?","D > 0 real and distinct; D = 0 equal; D < 0 complex"],["Roots of opposite sign?","Product of roots < 0"],["α² + β² in terms of roots?","(α + β)² − 2αβ"]],
+m0_2:[["nth term of an AP and a GP?","a + (n − 1)d; arⁿ⁻¹"],["Σn, Σn², Σn³?","n(n+1)/2; n(n+1)(2n+1)/6; [n(n+1)/2]²"],["Relation of AM, GM, HM?","AM ≥ GM ≥ HM; GM² = AM × HM"]],
+m0_3:[["Pythagorean identities?","sin²θ + cos²θ = 1; 1 + tan²θ = sec²θ"],["2 sinA cosB?","sin(A + B) + sin(A − B)"],["tan(A + B)?","(tanA + tanB)/(1 − tanA tanB)"],["sin3θ and cos3θ?","3sinθ − 4sin³θ; 4cos³θ − 3cosθ"]],
+m0_4:[["General solution of tanθ = tanα?","θ = nπ + α"],["Solving a sinθ + b cosθ = c?","Write as R sin(θ + φ) with R = √(a² + b²); solvable if |c| ≤ R"]],
+m0_5:[["nPr formula?","n!/(n − r)!"],["Arrangements of n objects with p alike?","n!/p!"],["Ways to distribute n identical objects into r groups?","(n + r − 1)C(r − 1)"],["Number of derangements?","n!(1 − 1/1! + 1/2! − … + (−1)ⁿ/n!)"]],
+m0_6:[["Middle term of (x + a)ⁿ?","T(n/2 + 1) if n is even; two middle terms if n is odd"],["nCr = ?","nC(n − r)"],["Sum of even-placed and odd-placed coefficients?","2ⁿ⁻¹ each"]],
+m1_0:[["Forms of a straight line?","y = mx + c; y − y₁ = m(x − x₁); x/a + y/b = 1"],["Distance between parallel lines?","|c₁ − c₂|/√(a² + b²)"],["Internal section formula?","((mx₂ + nx₁)/(m + n), (my₂ + ny₁)/(m + n))"],["Area of a triangle?","½|x₁(y₂ − y₃) + x₂(y₃ − y₁) + x₃(y₁ − y₂)|"],["Centroid and incentre?","Centroid: average of vertices; incentre: (ax₁ + bx₂ + cx₃)/(a + b + c)"]],
+m1_1:[["General circle equation?","x² + y² + 2gx + 2fy + c = 0; centre (−g, −f), r = √(g² + f² − c)"],["Length of tangent from a point?","√S₁"],["Chord with a given midpoint?","T = S₁"],["Radical axis?","S₁ − S₂ = 0"],["Director circle of x² + y² = a²?","x² + y² = 2a²"]],
+m1_2:[["Tangent to y² = 4ax at (x₁, y₁)?","yy₁ = 2a(x + x₁)"],["Parametric form of y² = 4ax?","(at², 2at)"],["Condition for y = mx + c to touch y² = 4ax?","c = a/m"],["Focal distance of a point on the parabola?","x + a"]],
+m1_3:[["Foci and directrices of the ellipse?","(±ae, 0); x = ±a/e"],["Parametric form of the ellipse?","(a cosθ, b sinθ)"],["Condition for y = mx + c to touch the ellipse?","c² = a²m² + b²"],["Sum of focal distances?","2a"]],
+m1_4:[["Foci and directrices of the hyperbola?","(±ae, 0); x = ±a/e"],["Eccentricity of a rectangular hyperbola?","√2"],["Condition for y = mx + c to touch the hyperbola?","c² = a²m² − b²"],["Difference of focal distances?","2a"]],
+m2_0:[["Inverse of a matrix?","A⁻¹ = adj A / |A|"],["Symmetric and skew-symmetric matrices?","Aᵀ = A; Aᵀ = −A"],["Split a matrix into symmetric and skew parts?","A = ½(A + Aᵀ) + ½(A − Aᵀ)"],["Trace property?","tr(AB) = tr(BA)"]],
+m2_1:[["|AB| and |kA| for n × n?","|A||B|; kⁿ|A|"],["Determinant with two identical rows?","0"],["Area of a triangle by determinant?","½|det[x₁ y₁ 1; x₂ y₂ 1; x₃ y₃ 1]|"],["Consistency of AX = B?","Unique solution if |A| ≠ 0; if |A| = 0 check (adj A)B"]],
+m2_2:[["De Morgan's laws?","(A ∪ B)′ = A′ ∩ B′; (A ∩ B)′ = A′ ∪ B′"],["Relations and functions from A (m elements) to B (n elements)?","2^(mn) relations; nᵐ functions"],["One-one functions from A to B?","nPm"]],
+m2_3:[["Composition (f∘g)(x)?","f(g(x))"],["Even and odd function tests?","f(−x) = f(x); f(−x) = −f(x)"],["Onto functions from an n-element set to a 2-element set?","2ⁿ − 2"]],
+m2_4:[["sin⁻¹(−x), cos⁻¹(−x), tan⁻¹(−x)?","−sin⁻¹x; π − cos⁻¹x; −tan⁻¹x"],["tan⁻¹x + tan⁻¹y?","tan⁻¹[(x + y)/(1 − xy)], xy < 1"],["Ranges of cos⁻¹x and tan⁻¹x?","[0, π]; (−π/2, π/2)"]],
+m3_0:[["L'Hôpital's rule?","For 0/0 or ∞/∞: lim f/g = lim f′/g′"],["lim (eˣ − 1)/x and lim (aˣ − 1)/x?","1; ln a"],["lim (tan x)/x and lim (1 − cos x)/x²?","1; 1/2"],["lim (1 + 1/x)ˣ as x → ∞?","e"]],
+m3_1:[["Derivatives of tan x, sec x, tan⁻¹x?","sec²x; sec x tan x; 1/(1 + x²)"],["Chain and product rules?","(f∘g)′ = f′(g)g′; (uv)′ = u′v + uv′"],["Rolle's and Lagrange's theorems?","f′(c) = 0 if f(a) = f(b); f′(c) = [f(b) − f(a)]/(b − a)"],["When to use logarithmic differentiation?","For functions of the form f(x)^g(x)"]],
+m3_2:[["Condition for an increasing function?","f′(x) > 0"],["Equation of the normal?","y − y₁ = −(1/f′(x₁))(x − x₁)"],["Rate of change of a sphere's volume?","dV/dt = 4πr² dr/dt"],["Angle between two curves?","tanθ = |(m₁ − m₂)/(1 + m₁m₂)|"]],
+m3_3:[["∫sec²x dx and ∫sec x tan x dx?","tan x + C; sec x + C"],["∫eˣ[f(x) + f′(x)]dx?","eˣ f(x) + C"],["∫dx/(x² + a²) and ∫dx/√(a² − x²)?","(1/a)tan⁻¹(x/a); sin⁻¹(x/a)"],["∫tan x dx and ∫cot x dx?","ln|sec x|; ln|sin x|"]],
+m3_4:[["Fundamental theorem of calculus?","∫ₐᵇ f(x)dx = F(b) − F(a)"],["King's property?","∫ₐᵇ f(x)dx = ∫ₐᵇ f(a + b − x)dx"],["Integral over n periods?","∫₀^{nT} f(x)dx = n∫₀ᵀ f(x)dx"]],
+m4_0:[["Area between two curves?","∫ₐᵇ [f(x) − g(x)]dx"],["Area of a circle by integration?","4∫₀ʳ √(r² − x²)dx = πr²"],["Area between y² = 4ax and its latus rectum?","8a²/3"]],
+m4_1:[["Variable separable equation?","f(y)dy = g(x)dx; integrate both sides"],["Homogeneous equation substitution?","y = vx"],["Solution of dy/dx + Py = Q?","y·e^(∫P dx) = ∫Q e^(∫P dx)dx + C"]],
+m4_2:[["Cross product?","|a × b| = |a||b| sinθ, perpendicular to both"],["Scalar triple product?","[a b c] = a·(b × c) = volume of parallelepiped"],["Projection of a on b?","a·b/|b|"],["Coplanarity of three vectors?","[a b c] = 0"]],
+m4_3:[["Line in 3D (symmetric form)?","(x − x₁)/l = (y − y₁)/m = (z − z₁)/n"],["Equation of a plane?","ax + by + cz + d = 0; vector form r·n = d"],["Distance of a point from a plane?","|ax₁ + by₁ + cz₁ + d|/√(a² + b² + c²)"],["Angle between two lines; line and plane?","cosθ = |l₁l₂ + m₁m₂ + n₁n₂|; sinθ = |a·n|/(|a||n|)"]],
+m5_0:[["Modulus and conjugate?","|z|² = z z̄; |z₁z₂| = |z₁||z₂|"],["De Moivre's theorem?","(cosθ + i sinθ)ⁿ = cos nθ + i sin nθ"],["Triangle inequality?","|z₁ + z₂| ≤ |z₁| + |z₂|"],["nth roots of unity?","e^(2πik/n), k = 0, 1, …, n − 1"],["Euler's form and powers of i?","e^(iθ) = cosθ + i sinθ; i² = −1, i⁴ = 1"]],
+m5_1:[["Conditional probability?","P(A|B) = P(A ∩ B)/P(B)"],["Total probability theorem?","P(A) = ΣP(Bᵢ)P(A|Bᵢ)"],["P(A ∪ B)?","P(A) + P(B) − P(A ∩ B)"],["Independent events?","P(A ∩ B) = P(A)P(B)"],["Mean and variance of a binomial distribution?","np and npq"]],
+m5_2:[["Mean and median for grouped data?","x̄ = Σfx/Σf; median = l + [(N/2 − cf)/f]h"],["Standard deviation?","σ = √variance"],["Coefficient of variation?","CV = (σ/x̄) × 100"],["Mode of grouped data?","l + [(f₁ − f₀)/(2f₁ − f₀ − f₂)]h"]]};
+for(const k in BI2)BI[k]=(BI[k]||[]).concat(BI2[k]);
+
+const SEM={p:"⚡",c:"🧪",m:"📐"};
+const CH=SUBJ.flatMap(sj=>sj.m.flatMap((g,gi)=>g[1].map((n,i)=>({id:sj.k+gi+"_"+i,n,s:sj.n}))));
+/* quote of the day */
+const QUOTES=["Paper phodna hai 💥 One chapter at a time.","Today's revision is tomorrow's confidence 🌱","Consistency beats intensity. Show up daily 🔥","You don't need a perfect day, just a productive one ✅","PYQs are the map, practice is the journey 🗺️","Small steps every day still reach IIT 🎯","Every formula you revise is one mark less to worry about ✨","Tired? Rest, then return. Don't quit 💪","Your future self is watching. Make them proud 🌟","Doubts are just chapters waiting to be mastered 📚"];
+{const n=new Date(),doy=Math.floor((n-new Date(n.getFullYear(),0,0))/864e5);$("qt").textContent="“"+QUOTES[doy%QUOTES.length]+"”"}
+/* sticky notes */
+const SW=["#ffe98a","#ffc2d4","#bfe3ff","#c9f2c7","#ffd3a1","#dcc8ff","#b8f0e6"],NEMO=["📌","📚","🔥","💡","⚠️","🎯","✅","❤️","🧠","⭐","🚀","💪"];
+let NE="📌",NCOL=SW[0];
+if(!D.stickies)D.stickies=[{id:1,e:"🔥",c:SW[0],r:-2,t:"PYQs 2019–22 first, then 2023–26!"},{id:2,e:"💪",c:SW[1],r:2,t:"You can do IT! #paperPhodnahai"},{id:3,e:"🧪",c:SW[3],r:-1,t:"Revise formulas every Sunday"}];
+for(const k in D.notes){const t=(D.notes[k]||"").trim(),c=CH.find(c=>c.id===k);if(t)D.stickies.push({id:Date.now()+Math.floor(Math.random()*1e5),e:"📝",c:SW[2],r:1,t:(c?c.n+": ":"")+t})}
+D.notes={};
+function renderNotes(){$("v-notes").innerHTML=`<div class="sechead"><h2>📌 Sticky notes</h2><p>Your own wall for reminders, tricks and pep talks — separate from the formula flashcards below.</p></div>
+<div class="card"><h3>Add a note</h3><textarea class="in" id="nt" rows="2" style="width:100%" placeholder="Write a reminder, a trick, a target… 💭"></textarea>
+<div class="pick">${NEMO.map(e=>`<button class="ch${e===NE?" on":""}" data-a="nemo" data-v="${e}" aria-label="Emoji ${e}">${e}</button>`).join("")}</div>
+<div class="pick">${SW.map(c=>`<button class="sw${c===NCOL?" on":""}" data-a="ncol" data-v="${c}" style="background:${c}" aria-label="Note colour"></button>`).join("")}<button class="btn p" data-a="nadd" style="margin-left:auto">Stick it 📌</button></div></div>
+<p class="notecount">${D.stickies.length} note${D.stickies.length===1?"":"s"} on your wall</p>
+<div class="wall">${D.stickies.map(n=>`<div class="sn" style="--c:${n.c};--r:${n.r}deg"><span class="em">${n.e}</span><button class="x" data-a="ndel" data-id="${n.id}" aria-label="Delete note">✕</button><textarea data-a="ntext" data-id="${n.id}" rows="5" aria-label="Note text">${esc(n.t)}</textarea><div class="pick sm">${SW.map(c=>`<button class="sw" data-a="nrec" data-id="${n.id}" data-v="${c}" style="background:${c}" aria-label="Recolour note"></button>`).join("")}</div></div>`).join("")||'<p class="mu" style="grid-column:1/-1">Your wall is empty. Stick your first note above! 📌</p>'}</div>`}
+/* flashcards */
+D.known=D.known||{};
+let FS={scope:"p",i:0,perm:null,on:false};
+function deckFor(v){const chs=v==="*"?CH:v.length===1?CH.filter(c=>c.id[0]===v):CH.filter(c=>c.id===v),out=[];
+  chs.forEach(c=>{const bq=new Set((BI[c.id]||[]).map(x=>x[0]));(BI[c.id]||[]).forEach(([q,a])=>out.push({k:c.id+"|"+q,ch:c.n,q,a}));(D.cards[c.id]||[]).filter(x=>!bq.has(x.q)).forEach(x=>out.push({k:c.id+"|"+x.q,ch:c.n,q:x.q,a:x.a,cid:x.id}))});return out}
+function curCard(){const d=deckFor(FS.scope),n=d.length;if(!n)return null;const i=Math.min(FS.i,n-1);return d[FS.perm&&FS.perm.length===n?FS.perm[i]:i]}
+function fmove(k){const n=deckFor(FS.scope).length;if(!n)return;FS.i=(Math.min(FS.i,n-1)+k+n)%n;FS.on=false;renderFlash()}
+function renderFlash(){const deck=deckFor(FS.scope),n=deck.length,c=curCard(),known=deck.filter(x=>D.known[x.k]).length,cnt=id=>(BI[id]||[]).length+(D.cards[id]||[]).length;
+  const mine=FS.scope.length>1?(D.cards[FS.scope]||[]).filter(x=>!(BI[FS.scope]||[]).some(b=>b[0]===x.q)):[];
+  const idx=Math.min(FS.i,n-1),order=FS.perm&&FS.perm.length===n?FS.perm:[...Array(n).keys()];
+  const subj=c?c.k[0]:null,SPILL={p:"Physics",c:"Chemistry",m:"Maths"};
+  const dots=n&&n<=30?`<div class="fprog">${order.map((di,pos)=>`<i class="${pos===idx?"on":D.known[deck[di].k]?"done":""}"></i>`).join("")}</div>`:"";
+  $("v-flash").innerHTML=`<div class="sechead"><h2>🃏 Formula flashcards</h2><p>Every JEE Main–relevant formula, chapter by chapter. Tap a card to reveal the answer.</p></div>
+<div class="card"><label class="mu">Deck <select class="in" id="fsel" style="max-width:100%"><option value="*" ${FS.scope==="*"?"selected":""}>🌍 Everything</option>${SUBJ.map(sj=>`<option value="${sj.k}" ${FS.scope===sj.k?"selected":""}>${SEM[sj.k]} All ${sj.n}</option>`).join("")}${SUBJ.map(sj=>`<optgroup label="${SEM[sj.k]} ${sj.n}">${CH.filter(x=>x.s===sj.n).map(x=>`<option value="${x.id}" ${FS.scope===x.id?"selected":""}>${esc(x.n)} (${cnt(x.id)})</option>`).join("")}</optgroup>`).join("")}</select></label>
+<p class="mu">${known} of ${n} cards marked known</p><div class="bar"><i style="width:${n?known/n*100:0}%;background:var(--ok)"></i></div></div>
+${c?`<div class="fcv"><div class="fcard${FS.on?" on":""}" id="fcard" data-subj="${subj}" role="button" tabindex="0" data-a="flip" aria-label="Flashcard, press to flip"><div class="fside ff"><span class="pill subj ${subj}">${SEM[subj]} ${SPILL[subj]}</span><div class="tag">${esc(c.ch)} · Question</div><div class="txt">${esc(c.q)}</div><div class="hint">Tap the card to flip 👆</div></div><div class="fside fb"><div class="tag">Answer ✅</div><div class="txt">${esc(c.a)}</div><div class="hint">Tap to flip back</div></div></div></div>
+<div class="frm" style="margin-top:18px"><button class="btn" data-a="fprev">← Prev</button><button class="btn" data-a="fknow" aria-pressed="${!!D.known[c.k]}">${D.known[c.k]?"✅ Known":"Mark as known"}</button><button class="btn" data-a="fnext">Next →</button><button class="btn" data-a="fshuf">🔀 Shuffle</button></div>
+<div class="fmeta"><p class="mu" style="margin:0">Card ${idx+1} of ${n} · Space flips · ← → move</p></div>${dots}`:'<p class="mu">No cards in this deck yet.</p>'}
+${FS.scope.length>1?`<div class="card"><h3>➕ Add your own card</h3><input class="in" id="fq" placeholder="Question or formula name" style="width:100%;margin-bottom:6px"><input class="in" id="fa" placeholder="Answer" style="width:100%;margin-bottom:8px"><button class="btn p" data-a="fadd">Add card</button>${mine.map(x=>`<div class="hb"><span style="flex:1">${esc(x.q)}</span><button class="btn" data-a="fdel" data-id="${x.id}" aria-label="Delete card">✕</button></div>`).join("")}</div>`:""}`}
+/* nav + events */
+const VIEWS=[["syllabus","📚 Syllabus"],["timers","⏱️ Timers"],["goals","🎯 Goals"],["notes","📌 Sticky notes"],["flash","🃏 Flashcards"]],RENDER={timers:renderTimers,goals:renderGoals,notes:renderNotes,flash:renderFlash};
+let VIEW="syllabus";
+function showView(v){VIEW=v;VIEWS.forEach(([k])=>{$("v-"+k).hidden=k!==v});$("nav").innerHTML=VIEWS.map(([k,l])=>`<button role="tab" aria-selected="${k===v}" data-view="${k}">${l}</button>`).join("");if(RENDER[v])RENDER[v]()}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-a],[data-view]");if(!b)return;
+  if(b.dataset.view){showView(b.dataset.view);return}
+  const a=b.dataset.a,id=+b.dataset.id,s=b.dataset.s,v=b.dataset.v;
+  if(a==="sgo")togS(s);else if(a==="pgo")togP();
+  else if(a==="prst"){PM.left=DUR[PM.mode];if(T&&T.k==="p")T=null;paintTimers()}
+  else if(a==="pmode"){PM.mode=b.dataset.m;PM.left=DUR[PM.mode];if(T&&T.k==="p")T=null;paintTimers()}
+  else if(a==="gadd"){const n=+$("gn").value;if(n>0){D.targets.push({id:Date.now(),type:$("gt").value,n,dl:$("gd").value});save();renderGoals()}}
+  else if(a==="gdel"){D.targets=D.targets.filter(g=>g.id!==id);save();renderGoals()}
+  else if(a==="nemo"){NE=v;document.querySelectorAll("[data-a=nemo]").forEach(x=>x.classList.toggle("on",x===b))}
+  else if(a==="ncol"){NCOL=v;document.querySelectorAll("[data-a=ncol]").forEach(x=>x.classList.toggle("on",x===b))}
+  else if(a==="nadd"){const t=$("nt").value.trim();if(t){D.stickies.unshift({id:Date.now(),e:NE,c:NCOL,r:Math.round((Math.random()*6-3)*10)/10,t});save();renderNotes()}}
+  else if(a==="ndel"){D.stickies=D.stickies.filter(n=>n.id!==id);save();renderNotes()}
+  else if(a==="nrec"){const n=D.stickies.find(n=>n.id===id);if(n){n.c=v;b.closest(".sn").style.setProperty("--c",v);save()}}
+  else if(a==="flip"){FS.on=!FS.on;b.classList.toggle("on",FS.on)}
+  else if(a==="fprev")fmove(-1);else if(a==="fnext")fmove(1);
+  else if(a==="fknow"){const c=curCard();if(c){if(D.known[c.k])delete D.known[c.k];else D.known[c.k]=1;save();renderFlash()}}
+  else if(a==="fshuf"){const n=deckFor(FS.scope).length;FS.perm=[...Array(n).keys()].sort(()=>Math.random()-.5);FS.i=0;FS.on=false;renderFlash()}
+  else if(a==="fadd"){const q=$("fq").value.trim(),an=$("fa").value.trim();if(q&&an){(D.cards[FS.scope]=D.cards[FS.scope]||[]).push({id:Date.now(),q,a:an});save();renderFlash()}}
+  else if(a==="fdel"){D.cards[FS.scope]=(D.cards[FS.scope]||[]).filter(c=>c.id!==id);save();renderFlash()}
+});
+document.addEventListener("change",e=>{const t=e.target,a=t.dataset.a;
+  else if(a==="goal"){D.goals[t.dataset.s]=Math.max(0,+t.value||0);save();paintTimers()}
+  else if(a==="psub")PM.sub=t.value;
+  else if(t.id==="fsel"){FS.scope=t.value;FS.i=0;FS.perm=null;FS.on=false;renderFlash()}});
+document.addEventListener("input",e=>{const t=e.target;if(t.dataset&&t.dataset.a==="ntext"){const n=D.stickies.find(n=>n.id===+t.dataset.id);if(n){n.t=t.value;save()}}});
+document.addEventListener("keydown",e=>{const t=e.target;if(t.matches&&t.matches("input,textarea,select"))return;
+  if(VIEW==="flash"){if(e.key==="ArrowRight"){e.preventDefault();fmove(1)}else if(e.key==="ArrowLeft"){e.preventDefault();fmove(-1)}
+    else if((e.key===" "||e.key==="Enter")&&(t.id==="fcard"||t===document.body)){e.preventDefault();const f=$("fcard");if(f){FS.on=!FS.on;f.classList.toggle("on",FS.on)}}}});
+showView("syllabus");
+document.getElementById("sv").addEventListener("click",commit);
+syncBar();
+render();
+</script>
+</body>
+</html>
